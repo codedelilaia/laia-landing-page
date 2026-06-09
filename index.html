@@ -224,6 +224,37 @@
       background: var(--panel-2);
       border: 1px solid var(--border);
     }
+    .market-snapshot {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+    }
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .metric-value.positive { color: #86efac; }
+    .metric-value.negative { color: #fca5a5; }
+    .metric-sub {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 6px;
+    }
     svg {
       width: 100%;
       height: auto;
@@ -248,6 +279,48 @@
     }
     .legend .open::before { background: #22c55e; }
     .legend .close::before { background: #a78bfa; }
+    .recent-prices {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .recent-price {
+      display: grid;
+      grid-template-columns: minmax(72px, 90px) 1fr 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      font-size: 0.94rem;
+    }
+    .recent-price .date { color: var(--fg); font-weight: 600; }
+    .recent-price .labelled {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .recent-price .delta {
+      font-weight: 700;
+      text-align: right;
+    }
+    .recent-price .delta.positive { color: #86efac; }
+    .recent-price .delta.negative { color: #fca5a5; }
+    @media (max-width: 640px) {
+      .chart-wrap {
+        padding: 12px;
+      }
+      .recent-price {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+      }
+      .recent-price .delta {
+        text-align: left;
+      }
+      svg {
+        margin-top: 4px;
+      }
+    }
     .footer-note {
       margin-top: 18px;
       color: var(--muted);
@@ -356,6 +429,9 @@
       const x = (i) => left + (innerW * i / Math.max(1, data.length - 1));
       const y = (v) => topPad + ((top - v) / (top - bottom)) * innerH;
       const line = (key) => data.map((row, i) => `${i === 0 ? 'M' : 'L'} ${x(i).toFixed(1)} ${y(row[key]).toFixed(1)}`).join(' ');
+      const latest = data[data.length - 1];
+      const dayMove = Number((latest.close - latest.open).toFixed(2));
+      const recent = data.slice(-5).reverse();
       const ticks = 4;
       const guides = Array.from({ length: ticks + 1 }, (_, i) => {
         const val = bottom + (top - bottom) * (i / ticks);
@@ -363,19 +439,56 @@
         return `<g><line x1="${left}" x2="${w-right}" y1="${yy}" y2="${yy}" stroke="rgba(255,255,255,0.08)"/><text x="4" y="${Number(yy)+4}" fill="#93a4c3" font-size="12">$${val.toFixed(0)}</text></g>`;
       }).join('');
       const labels = data.filter((_, i) => i === 0 || i === data.length - 1 || i % Math.ceil(data.length / 5) === 0)
-        .map((row, i, arr) => {
+        .map((row) => {
           const idx = data.findIndex(d => d.date === row.date && d.open === row.open && d.close === row.close);
           return `<text x="${x(idx).toFixed(1)}" y="${h-6}" fill="#93a4c3" font-size="11" text-anchor="middle">${row.date.slice(5)}</text>`;
         }).join('');
+      const latestX = x(data.length - 1).toFixed(1);
+      const openY = y(latest.open).toFixed(1);
+      const closeY = y(latest.close).toFixed(1);
+      const marketSnapshot = `
+        <div class="market-snapshot">
+          <div class="metric">
+            <div class="metric-label">Latest day</div>
+            <div class="metric-value">${latest.date}</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Open</div>
+            <div class="metric-value">$${latest.open.toFixed(2)}</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Close</div>
+            <div class="metric-value">$${latest.close.toFixed(2)}</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Day move</div>
+            <div class="metric-value ${dayMove >= 0 ? 'positive' : 'negative'}">${dayMove >= 0 ? '+' : '-'}$${Math.abs(dayMove).toFixed(2)}</div>
+            <div class="metric-sub">Close minus open</div>
+          </div>
+        </div>`;
+      const recentRows = recent.map((row) => {
+        const delta = Number((row.close - row.open).toFixed(2));
+        return `
+          <div class="recent-price">
+            <div class="date">${row.date.slice(5)}</div>
+            <div class="labelled">Open: $${row.open.toFixed(2)}</div>
+            <div class="labelled">Close: $${row.close.toFixed(2)}</div>
+            <div class="delta ${delta >= 0 ? 'positive' : 'negative'}">${delta >= 0 ? '+' : '-'}$${Math.abs(delta).toFixed(2)}</div>
+          </div>`;
+      }).join('');
 
       wrap.innerHTML = `
+        ${marketSnapshot}
         <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="VOO daily open and close chart">
           ${guides}
           <path d="${line('open')}" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
           <path d="${line('close')}" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="${latestX}" cy="${openY}" r="5" fill="#22c55e" />
+          <circle cx="${latestX}" cy="${closeY}" r="5" fill="#a78bfa" />
           ${labels}
         </svg>
         <div class="legend"><span class="open">Open</span><span class="close">Close</span></div>
+        <div class="recent-prices">${recentRows}</div>
       `;
       return wrap;
     }
