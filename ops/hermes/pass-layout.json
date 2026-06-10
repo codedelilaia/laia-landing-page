@@ -5,7 +5,7 @@
     {
       "entry": "laia/github/publish-pat",
       "kind": "text",
-      "target_path": "~/.hermes/secrets/github...laia.txt",
+      "target_path": "~/.hermes/secrets/github_pat_codedelilaia.txt",
       "required": true,
       "notes": "GitHub PAT used by update_laia_dashboard.py to clone/push dashboard.json."
     },
@@ -27,6 +27,7 @@
       "entry": "laia/cloudflare/github-token",
       "kind": "text",
       "target_env": "GITHUB_TOKEN",
+      "copy_from_entry": "laia/github/publish-pat",
       "required": true,
       "notes": "Cloudflare Worker secret. Can be the same credential as laia/github/publish-pat if desired."
     }

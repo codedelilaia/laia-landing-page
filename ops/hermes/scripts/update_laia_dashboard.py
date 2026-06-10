@@ -57,15 +57,7 @@ WATCHER_ACTIONS = [
     'Refresh this dashboard so the website stays aligned with the latest watcher state.',
 ]
 
-DEFAULT_CHORES = [
-    'Laundry / linens reset',
-    'Kitchen reset + dishwasher',
-    'Trash / recycling check',
-    'Water plants',
-]
-
 DEFAULT_INTERNAL_PROJECTS = [
-    'Secrets',
     'TextChest',
 ]
 
@@ -153,7 +145,6 @@ def build_dashboard(args):
     history, latest = fetch_voo_history()
 
     existing_email = find_module(existing, 'email')
-    existing_chores = find_module(existing, 'home_chores')
     existing_projects = find_module(existing, 'internal_projects')
     existing_daily_log = find_module(existing, 'daily_log')
 
@@ -163,7 +154,6 @@ def build_dashboard(args):
     )
     email_items = json.loads(args.email_items) if args.email_items is not None else existing_email.get('items', [])
 
-    chore_items = existing_chores.get('items') or DEFAULT_CHORES
     project_items = existing_projects.get('items') or DEFAULT_INTERNAL_PROJECTS
     daily_log_entries = merge_daily_log(existing_daily_log.get('entries') or [], args.daily_log_entry)
     daily_log_summary = (
@@ -175,7 +165,7 @@ def build_dashboard(args):
     return {
         'owner': 'Brian + Hermes',
         'headline': 'Laia keeps the board warm while you are away.',
-        'subheadline': 'Dense editorial view of inbox, engagements, routines, home chores, and live operating context.',
+        'subheadline': 'Dense editorial view of inbox, engagements, routines, and live operating context.',
         'last_updated': dt.datetime.now(dt.timezone.utc).isoformat(),
         'modules': [
             {
@@ -193,14 +183,6 @@ def build_dashboard(args):
                 'status': 'active',
                 'summary': 'Current company work arranged by motion, follow-up, and blockers.',
                 'columns': ENGAGEMENT_COLUMNS,
-            },
-            {
-                'id': 'home_chores',
-                'type': 'status',
-                'title': 'Home chores',
-                'status': 'active',
-                'summary': 'Persistent household list; can be updated from chat.',
-                'items': chore_items,
             },
             {
                 'id': 'internal_projects',

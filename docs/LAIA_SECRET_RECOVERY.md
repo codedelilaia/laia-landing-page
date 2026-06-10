@@ -17,15 +17,16 @@ The official `passwordstore.org` flow is basically:
 
 ## Important current fact
 On this machine right now:
-- `gpg` is **not installed**
-- `pass` is **not available in PATH**
+- `gpg` is installed
+- `pass` is installed and available in PATH
+- a dedicated live Laia pass store is **not initialized yet**
 
-So I did **not** pretend a live pass store already exists.
-Instead, I added repo support for it so we can adopt it cleanly.
+So I did **not** pretend the real secret store is already populated.
+Instead, I put the repo-side tooling in place and verified the workflow with a disposable test store.
 
 ## What I added
 - `ops/hermes/pass-layout.json` — canonical pass entry layout for Laia
-- `ops/hermes/bootstrap_laia.py` — can materialize required local secret files from pass entries once pass/gpg are installed
+- `ops/hermes/bootstrap_laia.py` — can both capture the current local secret files into pass and materialize them back out later
 
 ## Recommended pass layout
 - `laia/github/publish-pat`
@@ -59,8 +60,17 @@ pass git init
 ```
 Then attach a private remote for the password store git repo.
 
-## Materializing local files from pass
+## Capturing the current local secrets into pass
 Once `pass` is configured:
+```bash
+cd laia-personal-assistant
+python3 ops/hermes/bootstrap_laia.py --capture-secrets-to-pass
+```
+
+If `GITHUB_TOKEN` is not already set in your shell, the helper reuses `laia/github/publish-pat` for `laia/cloudflare/github-token` via the declared `copy_from_entry` fallback.
+
+## Materializing local files from pass
+Once `pass` is configured and populated:
 ```bash
 cd laia-personal-assistant
 python3 ops/hermes/bootstrap_laia.py --materialize-secrets-from-pass
@@ -89,7 +99,4 @@ Keeping:
 as separate systems is cleaner and safer.
 
 ## Practical next step
-The remaining missing step is not code — it is the actual creation of the pass/GPG secret store and loading the current live secrets into it.
-Once you want, I can do the repo-side prep for that workflow too, but I will need either:
-- a working local `pass` + `gpg` install, or
-- your preference for another secret backend.
+The remaining live step is to initialize the real private pass store with your chosen GPG recipient(s), then run the capture command once against the current machine state.

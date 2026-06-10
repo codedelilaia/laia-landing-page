@@ -26,7 +26,7 @@ OPS_ROOT = REPO_ROOT / "ops" / "hermes"
 SCRIPT_SOURCE_DIR = OPS_ROOT / "scripts"
 PASS_LAYOUT_PATH = OPS_ROOT / "pass-layout.json"
 CRON_MANIFEST_PATH = OPS_ROOT / "cron-jobs.yaml"
-HERMES_HOME = Path.home() / ".hermes"
+HERMES_HOME = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))).expanduser()
 HERMES_SCRIPTS_DIR = HERMES_HOME / "scripts"
 HERMES_CRON_JOBS = HERMES_HOME / "cron" / "jobs.json"
 
@@ -68,6 +68,8 @@ def load_pass_layout() -> dict:
 
 
 def expand_target(path_str: str) -> Path:
+    if path_str.startswith('~/.hermes/'):
+        return HERMES_HOME / path_str.removeprefix('~/.hermes/')
     return Path(path_str).expanduser()
 
 
@@ -154,6 +156,35 @@ def pass_show(entry_name: str) -> str:
     return result.stdout
 
 
+def pass_insert(entry_name: str, content: str, overwrite: bool = False) -> None:
+    cmd = ["pass", "insert", "-m"]
+    if overwrite:
+        cmd.append("-f")
+    cmd.append(entry_name)
+    subprocess.run(cmd, input=content, text=True, check=True)
+
+
+def local_secret_content(entry: dict) -> str:
+    target_path = entry.get("target_path")
+    if target_path:
+        target = expand_target(target_path)
+        if not target.exists():
+            raise FileNotFoundError(f"Missing local secret file for {entry['entry']}: {target}")
+        return target.read_text()
+
+    target_env = entry.get("target_env")
+    if target_env and os.environ.get(target_env):
+        return os.environ[target_env].rstrip("\n") + "\n"
+
+    copy_from_entry = entry.get("copy_from_entry")
+    if copy_from_entry:
+        return pass_show(copy_from_entry)
+
+    raise FileNotFoundError(
+        f"No local file, env var, or copy_from_entry source available for {entry['entry']}"
+    )
+
+
 def materialize_secrets_from_pass(overwrite: bool = False) -> list[str]:
     has_pass, has_gpg = pass_available()
     if not has_pass or not has_gpg:
@@ -175,6 +206,19 @@ def materialize_secrets_from_pass(overwrite: bool = False) -> list[str]:
         os.chmod(target, 0o600)
         writes.append(str(target))
     return writes
+
+
+def capture_secrets_to_pass(overwrite: bool = False) -> list[str]:
+    has_pass, has_gpg = pass_available()
+    if not has_pass or not has_gpg:
+        raise SystemExit("pass/gpg not available. Install both first before capturing secrets into pass.")
+
+    written = []
+    for entry in load_pass_layout()["entries"]:
+        content = local_secret_content(entry)
+        pass_insert(entry["entry"], content, overwrite=overwrite)
+        written.append(entry["entry"])
+    return written
 
 
 def existing_cron_names() -> set[str]:
@@ -271,6 +315,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--install-scripts", action="store_true", help="Copy vendored scripts into ~/.hermes/scripts")
     p.add_argument("--force", action="store_true", help="Allow overwriting existing target files for install/materialize")
     p.add_argument("--materialize-secrets-from-pass", action="store_true", help="Write required local secret files from pass entries")
+    p.add_argument("--capture-secrets-to-pass", action="store_true", help="Write current local secret files/env values into the configured pass store")
     p.add_argument("--install-cron", action="store_true", help="Create the current Laia cron jobs via Hermes CLI")
     p.add_argument("--print-pass-setup", action="store_true", help="Print recommended pass layout and setup steps")
     p.add_argument("--print-cloudflare-secret-command", action="store_true", help="Print the wrangler secret command using pass")
@@ -302,6 +347,13 @@ def main() -> int:
         for path in written:
             print(f"- {path}")
 
+    if args.capture_secrets_to_pass:
+        did_something = True
+        written = capture_secrets_to_pass(overwrite=args.force)
+        print("Captured secrets into pass:" if written else "Captured secrets into pass: nothing to do")
+        for entry_name in written:
+            print(f"- {entry_name}")
+
     if args.install_cron or args.all:
         did_something = True
         created = create_cron_jobs(skip_existing=True)
@@ -318,7 +370,7 @@ def main() -> int:
         print_cloudflare_secret_command()
 
     if not did_something:
-        print("Nothing selected. Try --check, --install-scripts, --install-cron, --materialize-secrets-from-pass, or --all.")
+        print("Nothing selected. Try --check, --install-scripts, --install-cron, --materialize-secrets-from-pass, --capture-secrets-to-pass, or --all.")
     return 0
 
 

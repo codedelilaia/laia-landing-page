@@ -49,7 +49,6 @@ Laia currently consists of four cooperating parts:
 ### Shared editing
 - The Worker handles `/api/dashboard-state` and `/api/dashboard-update`.
 - Shared editable modules are currently:
-  - `home_chores`
   - `internal_projects`
 - The browser reads live state from the Worker, not just from the static file.
 

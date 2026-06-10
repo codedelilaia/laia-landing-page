@@ -563,7 +563,6 @@
       background: linear-gradient(180deg, rgba(255,248,235,0.88), rgba(255,255,255,0.92));
       border-color: rgba(217,119,6,0.14);
     }
-    .module-home_chores .status-item::before,
     .module-internal_projects .status-item::before {
       background: linear-gradient(135deg, #3bb273, #7cd8a1);
       box-shadow: 0 0 0 4px rgba(59,178,115,0.11);
@@ -614,7 +613,7 @@
             <div class="brand-mark">Laia</div>
             <div id="headline" class="headline">Editorial ops surface</div>
           </div>
-          <p id="subheadline" class="sub">Dense editorial view of inbox, engagements, routines, home chores, and live operating context.</p>
+          <p id="subheadline" class="sub">Dense editorial view of inbox, engagements, routines, and live operating context.</p>
         </div>
         <div class="mast-stats">
           <div class="stat-grid">
@@ -694,7 +693,7 @@
       return isNaN(d) ? value : d.toLocaleString();
     };
 
-    const EDITABLE_MODULES = new Set(['home_chores', 'internal_projects']);
+    const EDITABLE_MODULES = new Set(['internal_projects']);
     const NOOP_EMAIL_SUMMARY = 'No new non-spam email at the latest check.';
     const storageKey = (id) => `laia-module-${id}`;
     let dashboardState = null;
@@ -1130,7 +1129,6 @@
         email: 'lead',
         engagements: 'engagements',
         market: 'market',
-        home_chores: 'personal',
         internal_projects: 'personal',
         daily_log: 'personal',
         watcher: 'rail',
