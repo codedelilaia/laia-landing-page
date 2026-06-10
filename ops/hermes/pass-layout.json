@@ -1,0 +1,34 @@
+{
+  "store": "pass",
+  "description": "Recommended recoverable secret layout for Laia. Keep this in a private git-backed password store.",
+  "entries": [
+    {
+      "entry": "laia/github/publish-pat",
+      "kind": "text",
+      "target_path": "~/.hermes/secrets/github...laia.txt",
+      "required": true,
+      "notes": "GitHub PAT used by update_laia_dashboard.py to clone/push dashboard.json."
+    },
+    {
+      "entry": "laia/google/client-secret-json",
+      "kind": "json-file",
+      "target_path": "~/.hermes/google_client_secret.json",
+      "required": true,
+      "notes": "OAuth client secret used to refresh Gmail readonly access tokens."
+    },
+    {
+      "entry": "laia/google/gmail-readonly-token-json",
+      "kind": "json-file",
+      "target_path": "~/.hermes/gmail_readonly_token.json",
+      "required": true,
+      "notes": "Readonly Gmail OAuth token/refresh token bundle."
+    },
+    {
+      "entry": "laia/cloudflare/github-token",
+      "kind": "text",
+      "target_env": "GITHUB_TOKEN",
+      "required": true,
+      "notes": "Cloudflare Worker secret. Can be the same credential as laia/github/publish-pat if desired."
+    }
+  ]
+}

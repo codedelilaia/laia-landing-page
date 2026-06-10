@@ -38,6 +38,8 @@ Laia currently consists of four cooperating parts:
 - `ops/hermes/scripts/update_laia_dashboard.py`
 - `ops/hermes/scripts/gmail_readonly_watch.py`
 - `ops/hermes/cron-jobs.yaml`
+- `ops/hermes/bootstrap_laia.py`
+- `ops/hermes/pass-layout.json`
 
 ## 3. Current behavior
 ### Shared editing

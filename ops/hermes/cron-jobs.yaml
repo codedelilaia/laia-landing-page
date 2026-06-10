@@ -3,6 +3,7 @@ jobs:
     purpose: Poll Gmail read-only inbox state during the workday and refresh dashboard email status.
     schedule: "0,30 9-17 * * *"
     runner: script
+    prompt: "Run the Gmail read-only watcher script. The script prints a Telegram-ready email digest only when new, non-spam email is found; empty stdout means send nothing."
     script: ops/hermes/scripts/gmail_readonly_watch.py
     delivery: origin
     no_agent: true
@@ -14,6 +15,7 @@ jobs:
     purpose: End-of-day email check using the same Gmail read-only watcher.
     schedule: "0 18 * * *"
     runner: script
+    prompt: "Run the Gmail read-only watcher script at the end of the workday. The script prints a Telegram-ready email digest only when new, non-spam email is found; empty stdout means send nothing."
     script: ops/hermes/scripts/gmail_readonly_watch.py
     delivery: origin
     no_agent: true
@@ -23,12 +25,20 @@ jobs:
     schedule: "0 0 * * *"
     runner: agent
     delivery: local
+    prompt: |
+      Create or refresh Laia's daily work log entry for the local calendar day that just ended.
+
+      Requirements:
+      1. Determine the local date and summarize the day that just finished (at midnight, this is yesterday in local time).
+      2. Use session_search to inspect recent Hermes sessions/messages from that day. Combine all meaningful work into one concise daily report.
+      3. Focus on completed work, important fixes, decisions, and operational changes. Do not include secrets, tokens, raw tool output, or noisy minutiae.
+      4. Produce one JSON object with keys: date, title, summary, bullets. Use 4-8 bullets max.
+      5. Publish it by running:
+         /Users/computer/.hermes/hermes-agent/venv/bin/python /Users/computer/.hermes/scripts/update_laia_dashboard.py --daily-log-entry '<JSON>'
+      6. If there was clearly no meaningful tracked work that day, do nothing and exit with a brief one-line explanation.
+      7. The remote GitHub repo state is authoritative. Do not hand-edit the website; use the updater script only.
+
+      Output style if you do publish: one short human sentence confirming the date logged.
     enabled_toolsets:
       - session_search
       - terminal
-    prompt_summary:
-      - Determine the local date that just ended.
-      - Search recent Hermes sessions from that date.
-      - Produce one concise JSON report with date, title, summary, and bullets.
-      - Publish it through ops/hermes/scripts/update_laia_dashboard.py using --daily-log-entry.
-      - If there was no meaningful tracked work, do nothing.

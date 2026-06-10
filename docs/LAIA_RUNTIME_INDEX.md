@@ -15,10 +15,13 @@ This repository now carries the core durable artifacts that define the current L
 - `ops/hermes/scripts/update_laia_dashboard.py` — canonical dashboard publisher/updater
 - `ops/hermes/scripts/gmail_readonly_watch.py` — Gmail read-only watcher that feeds dashboard email state
 - `ops/hermes/cron-jobs.yaml` — human-maintained manifest of the scheduled jobs that currently define Laia's automation
+- `ops/hermes/bootstrap_laia.py` — repo-side bootstrap/recovery helper for installing scripts, recreating cron jobs, and checking prerequisites
+- `ops/hermes/pass-layout.json` — canonical pass entry layout for recoverable Laia secrets
 
 ### Manuals
 - `docs/LAIA_RUNTIME_INDEX.md` — this file
 - `docs/LAIA_OPERATING_MANUAL.md` — migration/recovery guide and required secrets/services
+- `docs/LAIA_SECRET_RECOVERY.md` — recoverable secret-storage strategy and pass workflow
 
 ## What is intentionally not committed
 These are required to run Laia, but their secret values should stay outside git:
