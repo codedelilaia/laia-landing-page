@@ -416,6 +416,59 @@
     .recent-price .delta.positive { color: #1f7d4d; }
     .recent-price .delta.negative { color: #b45309; }
 
+    .editor-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .editor-btn {
+      appearance: none;
+      border: 1px solid rgba(71, 85, 105, 0.14);
+      background: rgba(255,255,255,0.96);
+      color: var(--fg);
+      border-radius: 12px;
+      padding: 8px 11px;
+      font: inherit;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+    }
+    .editor-btn.secondary {
+      color: var(--muted);
+    }
+    .editor-panel {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(71, 85, 105, 0.10);
+    }
+    .editor-help {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+    .editor-textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid rgba(71, 85, 105, 0.14);
+      background: #fff;
+      color: var(--fg);
+      padding: 12px;
+      font: inherit;
+      line-height: 1.45;
+    }
+    .editor-status {
+      color: var(--muted);
+      font-size: 0.84rem;
+      min-height: 1.2em;
+    }
     .footer-note {
       margin-top: 6px;
       color: var(--muted);
@@ -558,6 +611,142 @@
       return isNaN(d) ? value : d.toLocaleString();
     };
 
+    const EDITABLE_MODULES = new Set(['home_chores', 'internal_projects']);
+    const storageKey = (id) => `laia-module-${id}`;
+
+    async function loadRemoteDashboard() {
+      try {
+        const res = await fetch('./dashboard.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch {
+        return null;
+      }
+    }
+
+    function getSavedItems(mod) {
+      if (!EDITABLE_MODULES.has(mod.id)) return mod.items || [];
+      try {
+        const raw = localStorage.getItem(storageKey(mod.id));
+        if (!raw) return mod.items || [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : (mod.items || []);
+      } catch {
+        return mod.items || [];
+      }
+    }
+
+    async function persistModuleItems(modId, items) {
+      const res = await fetch('/api/dashboard-update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ moduleId: modId, items }),
+      });
+      const text = await res.text();
+      let data = {};
+      try { data = JSON.parse(text); } catch {}
+      if (!res.ok) throw new Error(data.error || text || `HTTP ${res.status}`);
+      localStorage.setItem(storageKey(modId), JSON.stringify(items));
+      return data;
+    }
+
+    function cacheItems(modId, items) {
+      localStorage.setItem(storageKey(modId), JSON.stringify(items));
+    }
+
+    function clearItems(modId) {
+      localStorage.removeItem(storageKey(modId));
+    }
+
+    function parseTextareaList(value) {
+      return value
+        .split('\n')
+        .map((line) => line.replace(/^\s*[-*]\s*/, '').trim())
+        .filter(Boolean);
+    }
+
+    function formatTextareaList(items) {
+      return (items || []).join('\n');
+    }
+
+    function attachListEditor(node, mod) {
+      const content = node.querySelector('.content');
+      const itemsWrap = content.querySelector('.status-items');
+      if (!itemsWrap) return;
+
+      const tools = document.createElement('div');
+      tools.className = 'editor-tools';
+      tools.innerHTML = `
+        <button type="button" class="editor-btn">Edit list</button>
+        <button type="button" class="editor-btn secondary">Reset to default</button>
+      `;
+
+      const panel = document.createElement('div');
+      panel.className = 'editor-panel';
+      panel.hidden = true;
+      panel.innerHTML = `
+        <div class="editor-help">One item per line. On Cloudflare, save writes through the site backend so the list can sync across devices.</div>
+        <textarea class="editor-textarea"></textarea>
+        <div class="editor-tools">
+          <button type="button" class="editor-btn">Save</button>
+          <button type="button" class="editor-btn secondary">Cancel</button>
+        </div>
+        <div class="editor-status"></div>
+      `;
+
+      const [editBtn, resetBtn] = tools.querySelectorAll('button');
+      const textarea = panel.querySelector('.editor-textarea');
+      const [saveBtn, cancelBtn] = panel.querySelectorAll('.editor-tools button');
+      const status = panel.querySelector('.editor-status');
+
+      function rerenderItems(items) {
+        itemsWrap.innerHTML = '';
+        (items || []).forEach((item) => {
+          const div = document.createElement('div');
+          div.className = 'status-item';
+          div.textContent = item;
+          itemsWrap.appendChild(div);
+        });
+      }
+
+      editBtn.addEventListener('click', () => {
+        textarea.value = formatTextareaList(getSavedItems(mod));
+        status.textContent = '';
+        panel.hidden = false;
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        panel.hidden = true;
+      });
+
+      saveBtn.addEventListener('click', async () => {
+        const items = parseTextareaList(textarea.value);
+        saveBtn.disabled = true;
+        status.textContent = 'Saving…';
+        try {
+          await persistModuleItems(mod.id, items);
+          rerenderItems(items);
+          status.textContent = 'Saved and queued for cross-device sync.';
+          panel.hidden = true;
+        } catch (err) {
+          cacheItems(mod.id, items);
+          rerenderItems(items);
+          status.textContent = `Remote save unavailable. Kept locally in this browser only: ${String(err.message || err)}`;
+        } finally {
+          saveBtn.disabled = false;
+        }
+      });
+
+      resetBtn.addEventListener('click', async () => {
+        clearItems(mod.id);
+        rerenderItems(mod.items || []);
+        status.textContent = 'Reset to repo default.';
+      });
+
+      content.appendChild(tools);
+      content.appendChild(panel);
+    }
+
     function makeStatusItems(items) {
       const wrap = document.createElement('div');
       wrap.className = 'status-items';
@@ -698,11 +887,16 @@
       badge.textContent = status;
       badge.classList.add(status);
       const content = node.querySelector('.content');
+      const effectiveItems = getSavedItems(mod);
 
       if (mod.type === 'kanban') content.appendChild(makeKanban(mod.columns));
       else if (mod.type === 'cards') content.appendChild(makeCards(mod.cards));
       else if (mod.type === 'chart') content.appendChild(makeChart(mod.series));
-      else content.appendChild(makeStatusItems(mod.items || []));
+      else content.appendChild(makeStatusItems(effectiveItems));
+
+      if (EDITABLE_MODULES.has(mod.id) && mod.type === 'status') {
+        attachListEditor(node, { ...mod, items: effectiveItems });
+      }
 
       return node;
     }
