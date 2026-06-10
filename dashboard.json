@@ -2,21 +2,15 @@
   "owner": "Brian + Hermes",
   "headline": "Hermes keeps the engine warm while you are away.",
   "subheadline": "A live operations board for email, active deals, and the routines I am running for you.",
-  "last_updated": "2026-06-10T09:51:05.634069+00:00",
+  "last_updated": "2026-06-10T10:00:32.528720+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
       "title": "Email radar",
-      "status": "attention",
-      "summary": "15 incoming non-spam email(s); 14 likely need a reply.",
-      "items": [
-        "Needs reply: Re: Follow del Virtual Assistant \u2014 Ruben - Airon Heads. Hola Brian, qu\u00e9 tal?Pues ayer mismo me acord\u00e9 de ti. Spoiler: de momento nada. Nos est\u00e1n haciendo ghosting de manual. De\u2026 Suggested reply: Thanks Ruben \u2014 understood. Let's leave this parked for now and pick it back up if the client re-engages closer to IFEMA.",
-        "Needs reply: Updated invitation: Dharma Project Apps Set-up @ Thu Jun 11, 2026 5pm - 5:30pm (CEST) (brian@maxplanck.dev) \u2014 Ben Arnon. Dharma Project Apps Set-up You have been invited by Ben Arnon to attend an event named Dharma Project Apps Set-up on Thu\u2026 Suggested reply: Thanks Ben \u2014 this works for me. I'll come prepared to review the app setup requirements and next implementation steps.",
-        "Needs reply: Re: ben@colorfarmmedia.com has invited you to join an organization \u2014 Ivan Leider. Yep! Ivan Sent from my iPhone On 10 Jun 2026, at 05:05, Ben Arnon <ben@colorfarmmedia.com> wrote: \ufeff Hi guys, Apologies I\u2026 Suggested reply: Thanks \u2014 got it. I'll review this and come back with the next step shortly.",
-        "Needs reply: Re: ben@colorfarmmedia.com has invited you to join an organization \u2014 Ben Arnon. Hi guys, Apologies I need to move this. Are you available on Thursday @ 11 am NY time? Ben On Mon, Jun 08, 2026 at 3:37 \u2026 Suggested reply: Thanks Ben \u2014 this works for me. I'll come prepared to review the app setup requirements and next implementation steps.",
-        "Needs reply: Re: [NMI Ticket 1260993] Re: Support with cross organization payments \u2014 Peter Fernandes. Hi Tigran, Could we schedule a call this week with NMI's integration support team to work out any questions we have abou\u2026 Suggested reply: Thanks \u2014 let's set up a support call to resolve the cross-organization payments and KYC questions, then align on the next implementation step."
-      ]
+      "status": "idle",
+      "summary": "No new non-spam email at the latest check.",
+      "items": []
     },
     {
       "id": "engagements",
