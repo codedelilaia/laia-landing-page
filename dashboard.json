@@ -145,24 +145,6 @@
       "title": "Market pulse",
       "status": "active",
       "summary": "Latest VOO session 2026-06-08: open $683.47, close $679.68.",
-      "annotations": [
-        {
-          "kind": "trade",
-          "label": "VOO entry",
-          "price": 533,
-          "color": "#f59e0b",
-          "style": "dashed",
-          "detail": "Entered around $533 with roughly $35k remembered basis."
-        },
-        {
-          "kind": "trade",
-          "label": "VOO exit",
-          "price": 686,
-          "color": "#ef4444",
-          "style": "solid",
-          "detail": "Exited around $686. Estimated gain: +28.71%, about +$10,046.90 on a remembered $35k basis."
-        }
-      ],
       "series": [
         {
           "date": "2026-05-11",

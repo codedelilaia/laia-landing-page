@@ -15,25 +15,6 @@ PAT_PATH = Path.home() / '.hermes' / 'secrets' / 'github_pat_codedelilaia.txt'
 YAHOO_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/VOO?range=1mo&interval=1d'
 MAX_DAILY_LOG_ENTRIES = 60
 
-DEFAULT_MARKET_ANNOTATIONS = [
-    {
-        'kind': 'trade',
-        'label': 'VOO entry',
-        'price': 533.0,
-        'color': '#f59e0b',
-        'style': 'dashed',
-        'detail': 'Entered around $533 with roughly $35k remembered basis.',
-    },
-    {
-        'kind': 'trade',
-        'label': 'VOO exit',
-        'price': 686.0,
-        'color': '#ef4444',
-        'style': 'solid',
-        'detail': 'Exited around $686. Estimated gain: +28.71%, about +$10,046.90 on a remembered $35k basis.',
-    },
-]
-
 ENGAGEMENT_COLUMNS = [
     {
         'title': 'Active now',
@@ -175,7 +156,6 @@ def build_dashboard(args):
     existing_chores = find_module(existing, 'home_chores')
     existing_projects = find_module(existing, 'internal_projects')
     existing_daily_log = find_module(existing, 'daily_log')
-    existing_market = find_module(existing, 'market')
 
     email_status = args.email_status if args.email_status is not None else existing_email.get('status', 'idle')
     email_summary = args.email_summary if args.email_summary is not None else existing_email.get(
@@ -186,7 +166,6 @@ def build_dashboard(args):
     chore_items = existing_chores.get('items') or DEFAULT_CHORES
     project_items = existing_projects.get('items') or DEFAULT_INTERNAL_PROJECTS
     daily_log_entries = merge_daily_log(existing_daily_log.get('entries') or [], args.daily_log_entry)
-    market_annotations = existing_market.get('annotations') or DEFAULT_MARKET_ANNOTATIONS
     daily_log_summary = (
         f"Nightly work log. {len(daily_log_entries)} day{'s' if len(daily_log_entries) != 1 else ''} saved; newest first."
         if daily_log_entries
@@ -257,7 +236,6 @@ def build_dashboard(args):
                     if latest else 'VOO market data unavailable.'
                 ),
                 'series': history,
-                'annotations': market_annotations,
             },
             {
                 'id': 'assistant',

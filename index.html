@@ -399,40 +399,6 @@
       display: grid;
       gap: 8px;
     }
-    .trade-reference {
-      margin-top: 14px;
-      display: grid;
-      gap: 10px;
-    }
-    .trade-reference .trade-card {
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(15, 23, 42, 0.42);
-      border: 1px solid rgba(115, 130, 160, 0.18);
-    }
-    .trade-reference .trade-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: baseline;
-      margin-bottom: 4px;
-    }
-    .trade-reference .trade-label {
-      font-size: 13px;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .trade-reference .trade-price {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .trade-reference .trade-detail {
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--muted-soft);
-    }
     .recent-price {
       display: grid;
       grid-template-columns: minmax(72px, 90px) 1fr 1fr auto;
@@ -1021,17 +987,15 @@
       return wrap;
     }
 
-    function makeChart(mod) {
+    function makeChart(series) {
       const wrap = document.createElement('div');
       wrap.className = 'chart-wrap';
-      const series = mod?.series || [];
-      const annotations = (mod?.annotations || []).filter((row) => Number.isFinite(row.price));
       const data = (series || []).filter((row) => Number.isFinite(row.open) && Number.isFinite(row.close));
       if (!data.length) {
         wrap.textContent = 'No chart data available.';
         return wrap;
       }
-      const values = data.flatMap((row) => [row.open, row.close]).concat(annotations.map((row) => row.price));
+      const values = data.flatMap((row) => [row.open, row.close]);
       const min = Math.min(...values);
       const max = Math.max(...values);
       const pad = (max - min) * 0.12 || 1;
@@ -1051,17 +1015,6 @@
         const val = bottom + (top - bottom) * (i / ticks);
         const yy = y(val).toFixed(1);
         return `<g><line x1="${left}" x2="${w-right}" y1="${yy}" y2="${yy}" stroke="rgba(95,116,150,0.16)"/><text x="4" y="${Number(yy)+4}" fill="#7285a5" font-size="12">$${val.toFixed(0)}</text></g>`;
-      }).join('');
-      const annotationLines = annotations.map((row) => {
-        const yy = y(row.price).toFixed(1);
-        const dash = row.style === 'dashed' ? '8 6' : '0';
-        const labelY = Math.max(14, Number(yy) - 8).toFixed(1);
-        const labelX = (w - right - 4).toFixed(1);
-        return `
-          <g>
-            <line x1="${left}" x2="${w-right}" y1="${yy}" y2="${yy}" stroke="${row.color || '#f59e0b'}" stroke-width="2" stroke-dasharray="${dash}" opacity="0.85"/>
-            <text x="${labelX}" y="${labelY}" fill="${row.color || '#f59e0b'}" font-size="12" text-anchor="end">${row.label}: $${row.price.toFixed(2)}</text>
-          </g>`;
       }).join('');
       const labels = data.filter((_, i) => i === 0 || i === data.length - 1 || i % Math.ceil(data.length / 5) === 0)
         .map((row) => {
@@ -1101,23 +1054,11 @@
             <div class="delta ${delta >= 0 ? 'positive' : 'negative'}">${delta >= 0 ? '+' : '-'}$${Math.abs(delta).toFixed(2)}</div>
           </div>`;
       }).join('');
-      const annotationCards = annotations.length ? `
-        <div class="trade-reference">
-          ${annotations.map((row) => `
-            <div class="trade-card">
-              <div class="trade-head">
-                <div class="trade-label">${row.label}</div>
-                <div class="trade-price">$${row.price.toFixed(2)}</div>
-              </div>
-              <div class="trade-detail">${row.detail || ''}</div>
-            </div>`).join('')}
-        </div>` : '';
 
       wrap.innerHTML = `
         ${marketSnapshot}
         <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="VOO daily open and close chart">
           ${guides}
-          ${annotationLines}
           <path d="${line('open')}" fill="none" stroke="#3bb273" stroke-width="3" stroke-linecap="round"/>
           <path d="${line('close')}" fill="none" stroke="#6d5efc" stroke-width="3" stroke-linecap="round"/>
           <circle cx="${latestX}" cy="${openY}" r="5" fill="#3bb273" />
@@ -1125,7 +1066,6 @@
           ${labels}
         </svg>
         <div class="legend"><span class="open">Open</span><span class="close">Close</span></div>
-        ${annotationCards}
         <div class="recent-prices">${recentRows}</div>
       `;
       return wrap;
@@ -1147,7 +1087,7 @@
       if (mod.type === 'kanban') content.appendChild(makeKanban(mod.columns));
       else if (mod.type === 'cards') content.appendChild(makeCards(mod.cards));
       else if (mod.type === 'history') content.appendChild(makeHistory(mod.entries));
-      else if (mod.type === 'chart') content.appendChild(makeChart(mod));
+      else if (mod.type === 'chart') content.appendChild(makeChart(mod.series));
       else content.appendChild(makeStatusItems(effectiveItems));
 
       if (EDITABLE_MODULES.has(mod.id) && mod.type === 'status') {
