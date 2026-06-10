@@ -2,20 +2,16 @@
   "owner": "Brian + Hermes",
   "headline": "Hermes keeps the engine warm while you are away.",
   "subheadline": "A live operations board for email, active deals, and the routines I am running for you.",
-  "last_updated": "2026-06-10T09:25:36.765192+00:00",
+  "last_updated": "2026-06-10T09:30:25.402954+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
       "title": "Email radar",
       "status": "attention",
-      "summary": "21 recent non-spam email(s); 18 likely need attention.",
+      "summary": "1 new non-spam email(s); 1 likely need attention.",
       "items": [
-        "Action likely: Re: Follow del Virtual Assistant \u2014 Brian Hume. Normal, \u00bfCu\u00e1ndo era IFEMA? Quiz\u00e1s podemos ver los precios y qu\u00e9 hay disponible m\u00e1s cerca de la fecha. No les haremos otra demo pero los pode\u2026",
-        "Action likely: Re: Follow del Virtual Assistant \u2014 Ruben - Airon Heads. Hola Brian, qu\u00e9 tal?Pues ayer mismo me acord\u00e9 de ti. Spoiler: de momento nada. Nos est\u00e1n haciendo ghosting de manual. De todas formas, yo le\u2026",
-        "Action likely: Re: ben@colorfarmmedia.com has invited you to join an organization \u2014 Brian Hume. I can't do tomorrow at 11. I'll share the requirements with Ivan and let him decide if we need to postpone. On Wed, Jun 10, 2026 at 6:56 AM \u2026",
-        "Action likely: Iberia LAE, SA Opera...: \u20ac2,380.54\u00a0EUR \u2014 PayPal. Payment details are inside. Hello, Brian Hume You paid \u20ac2380.54 EUR to Iberia LAE, SA Opera... Merchant Iberia LAE, SA Opera... Transaction \u2026",
-        "Action likely: Updated invitation: Dharma Project Apps Set-up @ Thu Jun 11, 2026 5pm - 5:30pm (CEST) (brian@maxplanck.dev) \u2014 Ben Arnon. Dharma Project Apps Set-up You have been invited by Ben Arnon to attend an event named Dharma Project Apps Set-up on Thursday Jun 11, 2026 \u22c5\u2026"
+        "Action likely: Re: Follow del Virtual Assistant \u2014 Brian Hume. Normal, \u00bfCu\u00e1ndo era IFEMA? Quiz\u00e1s podemos ver los precios y qu\u00e9 hay disponible m\u00e1s cerca de la fecha. No les haremos otra demo pero los pode\u2026"
       ]
     },
     {
