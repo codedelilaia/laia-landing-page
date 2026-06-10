@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, home chores, and live operating context.",
-  "last_updated": "2026-06-10T12:41:35.330542+00:00",
+  "last_updated": "2026-06-10T12:48:28.337350+00:00",
   "modules": [
     {
       "id": "email",
@@ -84,6 +84,27 @@
         "Secrets",
         "TextChest",
         "Daily report of tasks performed"
+      ]
+    },
+    {
+      "id": "daily_log",
+      "type": "history",
+      "title": "Daily report log",
+      "status": "active",
+      "summary": "Nightly work log. 1 day saved; newest first.",
+      "entries": [
+        {
+          "date": "2026-06-10",
+          "title": "Dashboard editing, sync, and nightly history",
+          "summary": "Reworked Laia so shared edits and dashboard automation stop fighting each other, then added the new nightly report log surface.",
+          "bullets": [
+            "Converted the dashboard editing path to use a Worker-backed shared read/write flow instead of stale local-only state.",
+            "Simplified Home chores into an add/remove todo interaction and kept Internal projects editable across devices.",
+            "Fixed the Gmail watcher dashboard publisher so it writes from fresh remote state and no longer depends on a stale local checkout.",
+            "Made remote repo state authoritative for dashboard updates.",
+            "Added a browsable daily report log module to the dashboard and prepared the midnight summary flow."
+          ]
+        }
       ]
     },
     {
@@ -245,7 +266,7 @@
         },
         {
           "title": "Sync policy",
-          "body": "When work changes dashboard-relevant state, the website should update too."
+          "body": "Remote repo state is authoritative; dashboard history is appended nightly."
         }
       ]
     }
