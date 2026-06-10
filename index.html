@@ -82,6 +82,12 @@
       line-height: 1.65;
       max-width: 76ch;
     }
+    .hero-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+    }
     .meta {
       display: flex;
       flex-wrap: wrap;
@@ -89,6 +95,33 @@
       margin-top: 18px;
       color: var(--muted);
       font-size: 0.94rem;
+    }
+    .logout-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 0.92rem;
+      white-space: nowrap;
+      transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+    }
+    .logout-link:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-1px);
+    }
+    @media (max-width: 640px) {
+      .hero-top {
+        flex-direction: column;
+      }
+      .logout-link {
+        width: 100%;
+      }
     }
     .overview {
       display: grid;
@@ -333,9 +366,14 @@
 <body>
   <div class="wrap">
     <section class="hero">
-      <div class="eyebrow">Hermes ops room</div>
-      <h1 id="headline">Hermes keeps the <span class="accent">engine warm</span>.</h1>
-      <p id="subheadline" class="sub">A live operations board for email, active deals, and the routines I am running for you.</p>
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">Hermes ops room</div>
+          <h1 id="headline">Hermes keeps the <span class="accent">engine warm</span>.</h1>
+          <p id="subheadline" class="sub">A live operations board for email, active deals, and the routines I am running for you.</p>
+        </div>
+        <a class="logout-link" href="/cdn-cgi/access/logout">Sign out</a>
+      </div>
       <div class="meta">
         <span id="owner">Owner: Brian + Hermes</span>
         <span id="updated">Last updated: —</span>
