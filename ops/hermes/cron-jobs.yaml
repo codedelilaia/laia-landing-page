@@ -1,0 +1,34 @@
+jobs:
+  - name: Gmail read-only watcher (9:00-17:30)
+    purpose: Poll Gmail read-only inbox state during the workday and refresh dashboard email status.
+    schedule: "0,30 9-17 * * *"
+    runner: script
+    script: ops/hermes/scripts/gmail_readonly_watch.py
+    delivery: origin
+    no_agent: true
+    notes:
+      - Silent when there is nothing meaningful to report.
+      - Refreshes dashboard email state through update_laia_dashboard.py.
+
+  - name: Gmail read-only watcher (18:00)
+    purpose: End-of-day email check using the same Gmail read-only watcher.
+    schedule: "0 18 * * *"
+    runner: script
+    script: ops/hermes/scripts/gmail_readonly_watch.py
+    delivery: origin
+    no_agent: true
+
+  - name: Laia daily work log (midnight)
+    purpose: Summarize the day that just ended and append/update one daily report entry on the dashboard website.
+    schedule: "0 0 * * *"
+    runner: agent
+    delivery: local
+    enabled_toolsets:
+      - session_search
+      - terminal
+    prompt_summary:
+      - Determine the local date that just ended.
+      - Search recent Hermes sessions from that date.
+      - Produce one concise JSON report with date, title, summary, and bullets.
+      - Publish it through ops/hermes/scripts/update_laia_dashboard.py using --daily-log-entry.
+      - If there was no meaningful tracked work, do nothing.
