@@ -644,26 +644,26 @@
 
       <div class="main-grid">
         <div class="primary-column">
-          <section>
+          <section id="lead-section">
             <h3 class="section-title">Work board</h3>
             <div id="lead-zone" class="stacked-panels"></div>
           </section>
-          <section>
+          <section id="engagement-section">
             <h3 class="section-title">Engagements</h3>
             <div id="engagement-zone"></div>
           </section>
-          <section>
+          <section id="market-section">
             <h3 class="section-title">Market</h3>
             <div id="market-zone"></div>
           </section>
         </div>
 
         <div class="secondary-column">
-          <section>
+          <section id="personal-section">
             <h3 class="section-title">Personal & internal</h3>
             <div id="personal-zone" class="stacked-panels"></div>
           </section>
-          <section>
+          <section id="rail-section">
             <h3 class="section-title">Agent rail</h3>
             <div id="rail-zone" class="stacked-panels"></div>
           </section>
@@ -695,6 +695,7 @@
     };
 
     const EDITABLE_MODULES = new Set(['home_chores', 'internal_projects']);
+    const NOOP_EMAIL_SUMMARY = 'No new non-spam email at the latest check.';
     const storageKey = (id) => `laia-module-${id}`;
     let dashboardState = null;
 
@@ -745,14 +746,33 @@
       dashboardState = structuredClone ? structuredClone(data) : JSON.parse(JSON.stringify(data));
     }
 
+    function shouldRenderModule(mod) {
+      if (!mod) return false;
+
+      if (mod.id === 'email') {
+        const items = getModuleItems(mod);
+        const summary = (mod.summary || '').trim();
+        const status = (mod.status || '').toLowerCase();
+        return items.length > 0 || status !== 'idle' || (summary && summary !== NOOP_EMAIL_SUMMARY);
+      }
+
+      if (mod.type === 'status') return getModuleItems(mod).length > 0;
+      if (mod.type === 'history') return (mod.entries || []).length > 0;
+      if (mod.type === 'kanban') return (mod.columns || []).some((col) => (col.cards || []).length > 0);
+      if (mod.type === 'cards') return (mod.cards || []).length > 0;
+      if (mod.type === 'chart') return (mod.series || []).length > 0;
+      return true;
+    }
+
     function syncHeader(data) {
       document.getElementById('headline').textContent = data.headline || 'Editorial ops surface';
       document.getElementById('subheadline').textContent = data.subheadline || '';
       document.getElementById('owner').textContent = data.owner || 'Brian + Hermes';
       document.getElementById('updated').textContent = prettyTime(data.last_updated);
 
-      const emailModule = (data.modules || []).find((mod) => mod.id === 'email');
-      const projectModule = (data.modules || []).find((mod) => mod.id === 'internal_projects');
+      const visibleModules = (data.modules || []).filter((mod) => shouldRenderModule(mod));
+      const emailModule = visibleModules.find((mod) => mod.id === 'email');
+      const projectModule = visibleModules.find((mod) => mod.id === 'internal_projects');
       document.getElementById('header-email').textContent = emailModule ? (emailModule.summary || emailModule.status || '—') : '—';
       document.getElementById('header-projects').textContent = projectModule ? ((projectModule.items || []).slice(0, 2).join(' · ') || '—') : '—';
     }
@@ -1099,11 +1119,11 @@
 
     function mount(modules) {
       const zones = {
-        lead: document.getElementById('lead-zone'),
-        engagements: document.getElementById('engagement-zone'),
-        market: document.getElementById('market-zone'),
-        personal: document.getElementById('personal-zone'),
-        rail: document.getElementById('rail-zone'),
+        lead: { zone: document.getElementById('lead-zone'), section: document.getElementById('lead-section') },
+        engagements: { zone: document.getElementById('engagement-zone'), section: document.getElementById('engagement-section') },
+        market: { zone: document.getElementById('market-zone'), section: document.getElementById('market-section') },
+        personal: { zone: document.getElementById('personal-zone'), section: document.getElementById('personal-section') },
+        rail: { zone: document.getElementById('rail-zone'), section: document.getElementById('rail-section') },
       };
 
       const placement = {
@@ -1117,9 +1137,18 @@
         assistant: 'rail',
       };
 
-      (modules || []).forEach((mod) => {
+      Object.values(zones).forEach(({ zone, section }) => {
+        zone.innerHTML = '';
+        section.hidden = false;
+      });
+
+      (modules || []).filter((mod) => shouldRenderModule(mod)).forEach((mod) => {
         const zoneName = placement[mod.id] || 'lead';
-        zones[zoneName].appendChild(renderModule(mod));
+        zones[zoneName].zone.appendChild(renderModule(mod));
+      });
+
+      Object.values(zones).forEach(({ zone, section }) => {
+        section.hidden = zone.children.length === 0;
       });
     }
 
