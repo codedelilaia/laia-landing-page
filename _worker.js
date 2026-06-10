@@ -13,6 +13,104 @@ function json(data, status = 200) {
   });
 }
 
+function requireHermes(env) {
+  if (!env.HERMES_API_BASE || !env.HERMES_API_KEY) {
+    return {
+      error: 'Hermes backend not connected. Configure HERMES_API_BASE and HERMES_API_KEY in Cloudflare for dashboard chat.',
+    };
+  }
+  return null;
+}
+
+async function hermes(path, env, init = {}) {
+  const missing = requireHermes(env);
+  if (missing) throw new Error(missing.error);
+  const base = String(env.HERMES_API_BASE).replace(/\/$/, '');
+  const res = await fetch(`${base}${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${env.HERMES_API_KEY}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...(init.headers || {}),
+    },
+  });
+  const text = await res.text();
+  let data = {};
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = { raw: text };
+  }
+  if (!res.ok) throw new Error(data.error || data.message || text || `Hermes HTTP ${res.status}`);
+  return data;
+}
+
+function getSessionId(url, body) {
+  return body?.sessionId || url.searchParams.get('sessionId') || url.searchParams.get('id');
+}
+
+async function hermesStatus(env) {
+  const missing = requireHermes(env);
+  if (missing) return json({ ok: false, configured: false, error: missing.error });
+  try {
+    const health = await hermes('/health', env, { headers: {} });
+    return json({ ok: true, configured: true, health });
+  } catch (err) {
+    return json({ ok: false, configured: true, error: String(err.message || err) }, 502);
+  }
+}
+
+async function hermesSessions(request, env) {
+  const url = new URL(request.url);
+  if (request.method === 'GET') {
+    const limit = url.searchParams.get('limit') || '20';
+    const data = await hermes(`/api/sessions?limit=${encodeURIComponent(limit)}&include_children=true`, env);
+    return json(data);
+  }
+  if (request.method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const data = await hermes('/api/sessions', env, {
+      method: 'POST',
+      body: JSON.stringify({ title: body.title || 'Dashboard chat', source: 'dashboard' }),
+    });
+    return json(data);
+  }
+  return json({ error: 'Method not allowed.' }, 405);
+}
+
+async function hermesMessages(request, env) {
+  const url = new URL(request.url);
+  const sessionId = getSessionId(url, null);
+  if (!sessionId) return json({ error: 'Missing sessionId.' }, 400);
+  const data = await hermes(`/api/sessions/${encodeURIComponent(sessionId)}/messages`, env);
+  return json(data);
+}
+
+async function hermesChat(request, env) {
+  const body = await request.json();
+  const sessionId = getSessionId(new URL(request.url), body);
+  const input = String(body?.input || body?.message || '').trim();
+  if (!sessionId) return json({ error: 'Missing sessionId.' }, 400);
+  if (!input) return json({ error: 'Missing message.' }, 400);
+  const data = await hermes(`/api/sessions/${encodeURIComponent(sessionId)}/chat`, env, {
+    method: 'POST',
+    body: JSON.stringify({ input }),
+  });
+  return json(data);
+}
+
+async function hermesFork(request, env) {
+  const body = await request.json().catch(() => ({}));
+  const sessionId = getSessionId(new URL(request.url), body);
+  if (!sessionId) return json({ error: 'Missing sessionId.' }, 400);
+  const data = await hermes(`/api/sessions/${encodeURIComponent(sessionId)}/fork`, env, {
+    method: 'POST',
+    body: JSON.stringify({ title: body.title || 'Dashboard branch' }),
+  });
+  return json(data);
+}
+
 async function github(path, token, init = {}) {
   const res = await fetch(`https://api.github.com${path}`, {
     ...init,
@@ -126,6 +224,45 @@ export default {
         return await updateDashboard(request, env);
       } catch (err) {
         return json({ error: String(err.message || err) }, 500);
+      }
+    }
+
+    if (url.pathname === '/api/hermes/status') {
+      return await hermesStatus(env);
+    }
+
+    if (url.pathname === '/api/hermes/sessions') {
+      try {
+        return await hermesSessions(request, env);
+      } catch (err) {
+        return json({ error: String(err.message || err) }, 502);
+      }
+    }
+
+    if (url.pathname === '/api/hermes/messages') {
+      if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405);
+      try {
+        return await hermesMessages(request, env);
+      } catch (err) {
+        return json({ error: String(err.message || err) }, 502);
+      }
+    }
+
+    if (url.pathname === '/api/hermes/chat') {
+      if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
+      try {
+        return await hermesChat(request, env);
+      } catch (err) {
+        return json({ error: String(err.message || err) }, 502);
+      }
+    }
+
+    if (url.pathname === '/api/hermes/fork') {
+      if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
+      try {
+        return await hermesFork(request, env);
+      } catch (err) {
+        return json({ error: String(err.message || err) }, 502);
       }
     }
 

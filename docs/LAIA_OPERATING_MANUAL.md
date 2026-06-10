@@ -83,9 +83,13 @@ Expected by the current scripts:
 - `~/.hermes/google_client_secret.json`
 - `~/.hermes/secrets/github_pat_codedelilaia.txt`
 
-### Cloudflare secret
+### Cloudflare secrets / variables
 Set in the Worker environment:
-- `GITHUB_TOKEN`
+- `GITHUB_TOKEN` — commits shared dashboard edits back to GitHub
+- `HERMES_API_BASE` — public/reachable base URL for the Hermes API server, for example `https://hermes-api.example.com`
+- `HERMES_API_KEY` — bearer token matching Hermes `API_SERVER_KEY`
+
+The dashboard chat UI calls the Worker, and the Worker proxies to Hermes so the browser never receives `HERMES_API_KEY`.
 
 ### Notes
 - The GitHub PAT used by Hermes and the Cloudflare `GITHUB_TOKEN` can be the same credential in practice, but they are injected through different mechanisms.
@@ -123,6 +127,9 @@ Provide:
 - connect repo to Cloudflare Workers/Pages deployment
 - use `wrangler.jsonc`
 - add Worker secret `GITHUB_TOKEN`
+- add Hermes chat Worker settings:
+  - `HERMES_API_BASE` — reachable Hermes API server URL
+  - `HERMES_API_KEY` — same value as local Hermes `API_SERVER_KEY`
 - deploy latest main
 
 ### E. Restore cron jobs
