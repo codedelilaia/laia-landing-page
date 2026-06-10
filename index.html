@@ -489,6 +489,69 @@
       font-size: 0.84rem;
       min-height: 1.2em;
     }
+    .history-log {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .history-entry {
+      border: 1px solid rgba(71, 85, 105, 0.10);
+      border-radius: 16px;
+      background: var(--panel-tint);
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+    .history-entry summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      display: grid;
+      gap: 6px;
+    }
+    .history-entry summary::-webkit-details-marker {
+      display: none;
+    }
+    .history-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+    .history-title {
+      font-size: 1rem;
+      line-height: 1.35;
+      font-weight: 700;
+      color: var(--fg);
+    }
+    .history-summary {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+    .history-body {
+      padding: 0 16px 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .history-bullets {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: var(--fg);
+      line-height: 1.5;
+      font-size: 0.93rem;
+    }
+    .history-link {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
     .footer-note {
       margin-top: 6px;
       color: var(--muted);
@@ -854,6 +917,76 @@
       return grid;
     }
 
+    function makeHistory(entries) {
+      const wrap = document.createElement('div');
+      wrap.className = 'history-log';
+      if (!(entries || []).length) {
+        const empty = document.createElement('div');
+        empty.className = 'status-item';
+        empty.textContent = 'No daily reports saved yet.';
+        wrap.appendChild(empty);
+        return wrap;
+      }
+
+      (entries || []).forEach((entry, index) => {
+        const details = document.createElement('details');
+        details.className = 'history-entry';
+        details.open = index === 0;
+
+        const summary = document.createElement('summary');
+        const meta = document.createElement('div');
+        meta.className = 'history-meta';
+        const date = document.createElement('span');
+        date.textContent = entry.date || 'Unknown date';
+        const label = document.createElement('span');
+        label.textContent = 'Daily report';
+        meta.appendChild(date);
+        meta.appendChild(label);
+
+        const title = document.createElement('div');
+        title.className = 'history-title';
+        title.textContent = entry.title || entry.date || 'Daily report';
+
+        const lead = document.createElement('div');
+        lead.className = 'history-summary';
+        lead.textContent = entry.summary || 'No summary provided.';
+
+        summary.appendChild(meta);
+        summary.appendChild(title);
+        summary.appendChild(lead);
+        details.appendChild(summary);
+
+        const body = document.createElement('div');
+        body.className = 'history-body';
+
+        if ((entry.bullets || []).length) {
+          const list = document.createElement('ul');
+          list.className = 'history-bullets';
+          entry.bullets.forEach((item) => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            list.appendChild(li);
+          });
+          body.appendChild(list);
+        }
+
+        if (entry.link) {
+          const anchor = document.createElement('a');
+          anchor.className = 'history-link';
+          anchor.href = entry.link;
+          anchor.textContent = 'Open linked artifact';
+          anchor.target = '_blank';
+          anchor.rel = 'noreferrer';
+          body.appendChild(anchor);
+        }
+
+        details.appendChild(body);
+        wrap.appendChild(details);
+      });
+
+      return wrap;
+    }
+
     function makeChart(series) {
       const wrap = document.createElement('div');
       wrap.className = 'chart-wrap';
@@ -953,6 +1086,7 @@
 
       if (mod.type === 'kanban') content.appendChild(makeKanban(mod.columns));
       else if (mod.type === 'cards') content.appendChild(makeCards(mod.cards));
+      else if (mod.type === 'history') content.appendChild(makeHistory(mod.entries));
       else if (mod.type === 'chart') content.appendChild(makeChart(mod.series));
       else content.appendChild(makeStatusItems(effectiveItems));
 
@@ -978,6 +1112,7 @@
         market: 'market',
         home_chores: 'personal',
         internal_projects: 'personal',
+        daily_log: 'personal',
         watcher: 'rail',
         assistant: 'rail',
       };
