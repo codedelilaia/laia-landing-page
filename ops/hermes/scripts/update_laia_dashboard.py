@@ -24,10 +24,6 @@ ENGAGEMENT_COLUMNS = [
                 'body': 'Platform/app setup, access coordination, recordings, and implementation motion.',
             },
             {
-                'title': 'ForwardFooding',
-                'body': 'Data Navigator 2.0 cleanup, taxonomy, imports, demos, and data structure work.',
-            },
-            {
                 'title': 'ZenHammer',
                 'body': 'Payment workflow work around NMI / SwipeSum, onboarding, and KYC concerns.',
             },
