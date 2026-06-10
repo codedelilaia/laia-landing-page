@@ -1,13 +1,13 @@
 {
   "owner": "Brian + Hermes",
-  "headline": "Hermes keeps the engine warm while you are away.",
-  "subheadline": "A live operations board for email, active deals, and the routines I am running for you.",
-  "last_updated": "2026-06-10T10:30:34.888411+00:00",
+  "headline": "Laia keeps the board warm while you are away.",
+  "subheadline": "Dense editorial view of inbox, engagements, routines, home chores, and live operating context.",
+  "last_updated": "2026-06-10T10:36:12.754261+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
-      "title": "Email radar",
+      "title": "Inbox needing attention",
       "status": "idle",
       "summary": "No new non-spam email at the latest check.",
       "items": []
@@ -15,9 +15,9 @@
     {
       "id": "engagements",
       "type": "kanban",
-      "title": "Current deals",
+      "title": "Engagement map",
       "status": "active",
-      "summary": "Board view of current company engagements.",
+      "summary": "Current company work arranged by motion, follow-up, and blockers.",
       "columns": [
         {
           "title": "Active now",
@@ -65,11 +65,35 @@
       ]
     },
     {
+      "id": "home_chores",
+      "type": "status",
+      "title": "Home chores",
+      "status": "active",
+      "summary": "Persistent household list; can be updated from chat.",
+      "items": [
+        "Laundry / linens reset",
+        "Kitchen reset + dishwasher",
+        "Trash / recycling check",
+        "Water plants"
+      ]
+    },
+    {
+      "id": "internal_projects",
+      "type": "status",
+      "title": "Internal projects",
+      "status": "active",
+      "summary": "Persistent list of internal products we are building together.",
+      "items": [
+        "Secrets",
+        "TextChest"
+      ]
+    },
+    {
       "id": "watcher",
       "type": "cards",
-      "title": "What I do every 30 minutes",
+      "title": "Agent routine",
       "status": "active",
-      "summary": "Work cycle for the weekday email watcher running at :00 and :30 from 09:00 through 18:00.",
+      "summary": "Weekday watcher cadence at :00 and :30 from 09:00 through 18:00.",
       "cards": [
         {
           "title": "Step 1",
@@ -100,9 +124,9 @@
     {
       "id": "market",
       "type": "chart",
-      "title": "VOO daily open vs close",
+      "title": "Market pulse",
       "status": "active",
-      "summary": "Latest session 2026-06-08: open $683.47, close $679.68.",
+      "summary": "Latest VOO session 2026-06-08: open $683.47, close $679.68.",
       "series": [
         {
           "date": "2026-05-11",
@@ -209,9 +233,9 @@
     {
       "id": "assistant",
       "type": "cards",
-      "title": "Assistant status",
+      "title": "Agent operating rules",
       "status": "active",
-      "summary": "The dashboard is meant to mirror current reality whenever work requires an update.",
+      "summary": "What the agent can do, what it will not do, and how the dashboard stays in sync.",
       "cards": [
         {
           "title": "Email permissions",
@@ -223,7 +247,7 @@
         },
         {
           "title": "Sync policy",
-          "body": "When work changes dashboard-relevant state, I should update the website too."
+          "body": "When work changes dashboard-relevant state, the website should update too."
         }
       ]
     }
