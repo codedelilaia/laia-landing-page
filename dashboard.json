@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-11T07:30:07.387182+00:00",
+  "last_updated": "2026-06-11T08:00:14.146531+00:00",
   "modules": [
     {
       "id": "email",
@@ -59,16 +59,6 @@
       "summary": "Persistent list of internal products we are building together.",
       "items": [
         "TextChest"
-      ]
-    },
-    {
-      "id": "chores",
-      "type": "status",
-      "title": "Chores",
-      "status": "active",
-      "summary": "Loose operational follow-ups to keep visible on the main dashboard.",
-      "items": [
-        "Pending: rerun cloudflared connector with sudo so it installs as a root/system service and survives reboot before user login."
       ]
     },
     {
