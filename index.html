@@ -217,6 +217,10 @@
       gap: 18px;
       align-items: start;
     }
+    .agent-config-section {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
     .history-zone {
       display: grid;
       gap: 18px;
@@ -914,7 +918,7 @@
         <section class="tab-panel" id="tab-agent" data-tab-panel="agent">
           <p class="tab-intro">Agent operations, configuration notes, internal projects, and reminders that govern how Laia/Hermes should behave.</p>
           <div id="agent-config-zone" class="agent-grid compact-grid">
-            <section id="rail-section">
+            <section id="rail-section" class="agent-config-section">
               <h3 class="section-title">Agent rail</h3>
               <div id="rail-zone" class="stacked-panels compact-grid"></div>
             </section>

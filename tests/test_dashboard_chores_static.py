@@ -19,6 +19,11 @@ def test_dashboard_json_contains_chores_module():
     assert chores["items"]
 
 
+def test_chores_data_precedes_market_data():
+    ids = [m.get("id") for m in DASHBOARD["modules"]]
+    assert ids.index("chores") < ids.index("market")
+
+
 def test_updater_preserves_or_recreates_chores():
     assert "DEFAULT_CHORES" in UPDATER
     assert "existing_chores" in UPDATER

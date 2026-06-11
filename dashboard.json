@@ -133,6 +133,16 @@
       ]
     },
     {
+      "id": "chores",
+      "type": "status",
+      "title": "Chores",
+      "status": "active",
+      "summary": "Loose operational follow-ups to keep visible on the main dashboard.",
+      "items": [
+        "Pending: rerun cloudflared connector with sudo so it installs as a root/system service and survives reboot before user login."
+      ]
+    },
+    {
       "id": "market",
       "type": "chart",
       "title": "Market pulse",

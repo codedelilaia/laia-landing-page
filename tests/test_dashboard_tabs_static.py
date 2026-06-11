@@ -57,4 +57,7 @@ def test_work_history_tab_is_far_right():
 
 def test_agent_config_blocks_are_side_by_side():
     assert 'agent-grid compact-grid' in INDEX
+    assert 'id="rail-section" class="agent-config-section"' in INDEX
+    assert 'id="rail-zone" class="stacked-panels compact-grid"' in INDEX
     assert "grid-template-columns: repeat(2, minmax(0, 1fr));" in INDEX
+    assert "grid-column: 1 / -1;" in INDEX
