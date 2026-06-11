@@ -166,6 +166,79 @@
       background: #fff;
     }
 
+
+
+    .tab-shell {
+      display: grid;
+      gap: 18px;
+    }
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 8px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.58);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      position: sticky;
+      top: 10px;
+      z-index: 5;
+      backdrop-filter: blur(14px);
+    }
+    .tab-button {
+      border: 1px solid rgba(71, 85, 105, 0.11);
+      border-radius: 15px;
+      background: rgba(255,255,255,0.72);
+      color: var(--muted);
+      padding: 11px 14px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: none;
+      transition: transform 140ms ease, background 140ms ease, border-color 140ms ease, color 140ms ease;
+    }
+    .tab-button:hover {
+      transform: translateY(-1px);
+      background: #fff;
+      border-color: rgba(109, 94, 252, 0.20);
+      color: var(--fg);
+    }
+    .tab-button.active {
+      background: linear-gradient(135deg, rgba(109,94,252,0.98), rgba(138,180,255,0.98));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 10px 24px rgba(109,94,252,0.20);
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+    .tab-intro {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.5;
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.95fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .agent-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .history-zone {
+      display: grid;
+      gap: 18px;
+    }
+
     .main-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.95fr);
@@ -579,9 +652,9 @@
     }
     .hermes-chat-grid {
       display: grid;
-      grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr);
+      grid-template-columns: minmax(280px, 0.32fr) minmax(0, 1fr);
       gap: 14px;
-      min-height: 480px;
+      min-height: 620px;
     }
     .hermes-session-rail,
     .hermes-chat-main {
@@ -658,8 +731,8 @@
       min-width: 0;
     }
     .hermes-messages {
-      min-height: 390px;
-      max-height: 560px;
+      min-height: 530px;
+      max-height: 68vh;
       overflow: auto;
       padding: 14px;
       display: flex;
@@ -721,6 +794,8 @@
     @media (max-width: 1180px) {
       .masthead,
       .main-grid,
+      .overview-grid,
+      .agent-grid,
       .split-boards {
         grid-template-columns: 1fr;
       }
@@ -733,6 +808,11 @@
       .market-snapshot,
       .hermes-chat-grid {
         grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hermes-messages {
+        min-height: 360px;
+        max-height: 58vh;
       }
     }
     @media (max-width: 720px) {
@@ -747,6 +827,8 @@
       .recent-price .delta { text-align: left; }
       .status-pill,
       .logout-link { width: 100%; justify-content: flex-start; }
+      .tab-nav { position: static; }
+      .tab-button { flex: 1 1 calc(50% - 10px); }
     }
   </style>
 </head>
@@ -788,34 +870,44 @@
         </div>
       </section>
 
-      <div class="main-grid">
-        <div class="primary-column">
-          <section id="lead-section">
-            <h3 class="section-title">Work board</h3>
-            <div id="lead-zone" class="stacked-panels"></div>
-          </section>
-          <section id="engagement-section">
-            <h3 class="section-title">Engagements</h3>
-            <div id="engagement-zone"></div>
-          </section>
-          <section id="market-section">
-            <h3 class="section-title">Market</h3>
-            <div id="market-zone"></div>
-          </section>
-        </div>
+      <div class="tab-shell">
+        <nav class="tab-nav" aria-label="Laia sections">
+          <button class="tab-button active" type="button" data-tab-target="dashboard">Dashboard</button>
+          <button class="tab-button" type="button" data-tab-target="chat">Chat</button>
+          <button class="tab-button" type="button" data-tab-target="history">Work history</button>
+          <button class="tab-button" type="button" data-tab-target="agent">Agent config</button>
+        </nav>
 
-        <div class="secondary-column">
-          <section id="personal-section">
-            <h3 class="section-title">Personal & internal</h3>
-            <div id="personal-zone" class="stacked-panels"></div>
-          </section>
+        <section class="tab-panel active" id="tab-dashboard" data-tab-panel="dashboard">
+          <p class="tab-intro">Current operational picture: inbox, active engagements, and market context without squeezing the chat UI.</p>
+          <div class="overview-grid">
+            <div class="primary-column">
+              <section id="lead-section">
+                <h3 class="section-title">Work board</h3>
+                <div id="lead-zone" class="stacked-panels"></div>
+              </section>
+              <section id="engagement-section">
+                <h3 class="section-title">Engagements</h3>
+                <div id="engagement-zone"></div>
+              </section>
+            </div>
+            <div class="secondary-column">
+              <section id="market-section">
+                <h3 class="section-title">Market</h3>
+                <div id="market-zone"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="tab-chat" data-tab-panel="chat">
           <section id="hermes-chat-section">
             <h3 class="section-title">Talk to Hermes</h3>
             <article id="hermes-chat-panel" class="panel hermes-chat-panel">
               <div class="panelhead">
                 <div>
                   <h2>Dashboard chat</h2>
-                  <p class="summary">Split, resume, and branch Hermes conversations without leaving Laia.</p>
+                  <p class="summary">A full-width workspace for splitting, resuming, and branching Hermes conversations.</p>
                 </div>
                 <span id="hermes-chat-badge" class="badge idle">checking</span>
               </div>
@@ -838,11 +930,27 @@
               <div id="hermes-status-line" class="hermes-status-line">Checking Hermes backend…</div>
             </article>
           </section>
-          <section id="rail-section">
-            <h3 class="section-title">Agent rail</h3>
-            <div id="rail-zone" class="stacked-panels"></div>
-          </section>
-        </div>
+        </section>
+
+        <section class="tab-panel" id="tab-history" data-tab-panel="history">
+          <h3 class="section-title">Work history</h3>
+          <p class="tab-intro">Browsable nightly work log and durable summaries, separated from the live dashboard so it can grow without clutter.</p>
+          <div id="history-zone" class="history-zone"></div>
+        </section>
+
+        <section class="tab-panel" id="tab-agent" data-tab-panel="agent">
+          <p class="tab-intro">Agent operations, configuration notes, internal projects, and reminders that govern how Laia/Hermes should behave.</p>
+          <div id="agent-config-zone" class="agent-grid">
+            <section id="personal-section">
+              <h3 class="section-title">Internal projects</h3>
+              <div id="personal-zone" class="stacked-panels"></div>
+            </section>
+            <section id="rail-section">
+              <h3 class="section-title">Agent rail</h3>
+              <div id="rail-zone" class="stacked-panels"></div>
+            </section>
+          </div>
+        </section>
       </div>
 
       <p class="footer-note">Rendered from <code>dashboard.json</code> so chat updates and automations can stay synchronized.</p>
@@ -871,6 +979,7 @@
 
     const EDITABLE_MODULES = new Set(['internal_projects']);
     const NOOP_EMAIL_SUMMARY = 'No new non-spam email at the latest check.';
+    const TAB_STORAGE_KEY = 'laia-active-tab';
     const storageKey = (id) => `laia-module-${id}`;
     let dashboardState = null;
     const hermesState = {
@@ -1115,10 +1224,34 @@
         setHermesEnabled(false);
         const message = String(err.message || err);
         const configHint = 'Set HERMES_API_BASE and HERMES_API_KEY.';
-        setHermesStatus(message.includes(configHint) ? message : `Hermes backend not connected: ${message}. ${configHint}`, 'attention');
+        setHermesStatus(message.includes('Hermes backend not connected') ? message : `Hermes backend not connected: ${message}. ${configHint}`, 'attention');
         renderHermesSessions();
         renderHermesMessages([]);
       });
+    }
+
+
+
+    function setActiveTab(tabName) {
+      const next = tabName || 'dashboard';
+      document.querySelectorAll('[data-tab-target]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.tabTarget === next);
+      });
+      document.querySelectorAll('[data-tab-panel]').forEach((panel) => {
+        panel.classList.toggle('active', panel.dataset.tabPanel === next);
+      });
+      localStorage.setItem(TAB_STORAGE_KEY, next);
+      if (next === 'chat') {
+        setTimeout(() => document.getElementById('hermes-messages')?.scrollTo(0, document.getElementById('hermes-messages')?.scrollHeight || 0), 0);
+      }
+    }
+
+    function initTabs() {
+      document.querySelectorAll('[data-tab-target]').forEach((button) => {
+        button.addEventListener('click', () => setActiveTab(button.dataset.tabTarget));
+      });
+      const saved = localStorage.getItem(TAB_STORAGE_KEY);
+      if (saved && document.querySelector(`[data-tab-panel="${saved}"]`)) setActiveTab(saved);
     }
 
     async function loadRemoteDashboard() {
@@ -1545,6 +1678,8 @@
         engagements: { zone: document.getElementById('engagement-zone'), section: document.getElementById('engagement-section') },
         market: { zone: document.getElementById('market-zone'), section: document.getElementById('market-section') },
         personal: { zone: document.getElementById('personal-zone'), section: document.getElementById('personal-section') },
+        history: { zone: document.getElementById('history-zone'), section: document.getElementById('tab-history') },
+        agentConfig: { zone: document.getElementById('rail-zone'), section: document.getElementById('rail-section') },
         rail: { zone: document.getElementById('rail-zone'), section: document.getElementById('rail-section') },
       };
 
@@ -1553,9 +1688,9 @@
         engagements: 'engagements',
         market: 'market',
         internal_projects: 'personal',
-        daily_log: 'personal',
-        watcher: 'rail',
-        assistant: 'rail',
+        daily_log: 'history',
+        watcher: 'agentConfig',
+        assistant: 'agentConfig',
       };
 
       Object.values(zones).forEach(({ zone, section }) => {
@@ -1573,6 +1708,7 @@
       });
     }
 
+    initTabs();
     initHermesChat();
 
     loadRemoteDashboard()
