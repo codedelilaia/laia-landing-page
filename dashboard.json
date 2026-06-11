@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-11T16:00:26.176719+00:00",
+  "last_updated": "2026-06-11T22:00:47.602244+00:00",
   "modules": [
     {
       "id": "email",
@@ -66,8 +66,22 @@
       "type": "history",
       "title": "Daily report log",
       "status": "active",
-      "summary": "Nightly work log. 2 days saved; newest first.",
+      "summary": "Nightly work log. 3 days saved; newest first.",
       "entries": [
+        {
+          "date": "2026-06-11",
+          "title": "Dashboard chat and layout hardening",
+          "summary": "Laia\u2019s dashboard advanced from a static operations board into a more capable Hermes-facing workspace, with native chat integration, Cloudflare tunnel setup work, repeated layout refinements, regression coverage, and a forward plan for a durable React/Vite rewrite to avoid chat timeout UX issues.",
+          "bullets": [
+            "Added a native Talk to Hermes dashboard chat panel backed by Cloudflare Worker proxy routes for status, sessions, messages, chat, and branching, keeping the Hermes API key server-side.",
+            "Installed cloudflared, consumed the user-provided tunnel connector command safely, installed the connector as a user LaunchAgent, and documented remaining runtime configuration and sudo/system-service follow-up without exposing tokens.",
+            "Reorganized the dashboard into a compact tabbed layout with a slim header, full-width Chat workspace, separated Work history tab, and Agent config using side-by-side desktop blocks.",
+            "Restored and reinforced operational dashboard placement: Chores render above Market Pulse / VOO, Internal projects sit below Engagement map, and chores remain editable and preserved by the updater.",
+            "Fixed Hermes chat creation regressions including object-shaped error display, duplicate session titles from the New button, optimistic new-session rendering, and safer Worker retry behavior.",
+            "Verified changes repeatedly with static dashboard tests, Worker and inline JS syntax checks, Wrangler dry-runs, local browser previews or mock checks, and pushed the resulting commits to the authoritative GitHub repo.",
+            "Captured the observed Cloudflare 524 chat UX issue in a concrete React + Vite + TypeScript persistence plan using D1-backed state and async chat runs so refreshes can rehydrate progress cleanly."
+          ]
+        },
         {
           "date": "2026-06-10",
           "title": "Laia dashboard, recovery, and Hermes chat",
@@ -137,7 +151,7 @@
       "type": "chart",
       "title": "Market pulse",
       "status": "active",
-      "summary": "Latest VOO session 2026-06-11: open $670.10, close $669.47.",
+      "summary": "Latest VOO session 2026-06-11: open $670.10, close $678.23.",
       "series": [
         {
           "date": "2026-05-14",
@@ -237,7 +251,7 @@
         {
           "date": "2026-06-11",
           "open": 670.1,
-          "close": 669.47
+          "close": 678.23
         }
       ]
     },
