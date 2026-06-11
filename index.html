@@ -53,15 +53,17 @@
       border-radius: var(--radius);
     }
     .masthead {
-      padding: 20px 22px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
-      gap: 18px;
-      align-items: start;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
     }
     .brand-stack {
-      display: grid;
-      gap: 10px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
     }
     .eyebrow {
       display: inline-flex;
@@ -69,9 +71,10 @@
       gap: 8px;
       color: var(--muted);
       text-transform: uppercase;
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       letter-spacing: 0.12em;
       font-weight: 700;
+      white-space: nowrap;
     }
     .eyebrow::before {
       content: '';
@@ -84,59 +87,30 @@
     .title-row {
       display: flex;
       align-items: baseline;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 10px;
+      flex-wrap: nowrap;
+      min-width: 0;
     }
     .brand-mark {
-      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-size: clamp(1.35rem, 2.2vw, 1.8rem);
       line-height: 1;
       font-weight: 800;
       letter-spacing: -0.05em;
     }
     .headline {
       color: #4c6184;
-      font-size: 1rem;
+      font-size: 0.92rem;
       letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .sub {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.55;
-      max-width: 74ch;
-      font-size: 0.98rem;
-    }
-    .mast-stats {
-      display: grid;
-      gap: 10px;
-    }
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .stat-card,
-    .status-pill,
+    .sub { display: none; }
     .logout-link {
-      border-radius: 16px;
+      border-radius: 14px;
       border: 1px solid rgba(71, 85, 105, 0.11);
       background: var(--panel-strong);
       box-shadow: var(--shadow-soft);
-    }
-    .stat-card {
-      padding: 12px 14px;
-    }
-    .stat-label {
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.7rem;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-    .stat-value {
-      font-size: 0.95rem;
-      line-height: 1.35;
-      font-weight: 600;
     }
     .header-actions {
       display: flex;
@@ -144,15 +118,14 @@
       flex-wrap: wrap;
       justify-content: flex-end;
     }
-    .status-pill,
     .logout-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 13px;
+      padding: 8px 11px;
       color: var(--muted);
-      font-size: 0.88rem;
-      font-weight: 600;
+      font-size: 0.84rem;
+      font-weight: 700;
       white-space: nowrap;
       text-decoration: none;
     }
@@ -792,7 +765,6 @@
     }
 
     @media (max-width: 1180px) {
-      .masthead,
       .main-grid,
       .overview-grid,
       .agent-grid,
@@ -825,8 +797,10 @@
         gap: 8px 10px;
       }
       .recent-price .delta { text-align: left; }
-      .status-pill,
-      .logout-link { width: 100%; justify-content: flex-start; }
+      .masthead { align-items: center; }
+      .brand-stack { gap: 8px; }
+      .eyebrow { display: none; }
+      .logout-link { justify-content: center; }
       .tab-nav { position: static; }
       .tab-button { flex: 1 1 calc(50% - 10px); }
     }
@@ -837,36 +811,14 @@
     <div class="shell">
       <section class="masthead">
         <div class="brand-stack">
-          <div class="eyebrow">Private operating board</div>
+          <div class="eyebrow">Private board</div>
           <div class="title-row">
             <div class="brand-mark">Laia</div>
             <div id="headline" class="headline">Editorial ops surface</div>
           </div>
-          <p id="subheadline" class="sub">Dense editorial view of inbox, engagements, routines, and live operating context.</p>
         </div>
-        <div class="mast-stats">
-          <div class="stat-grid">
-            <div class="stat-card">
-              <div class="stat-label">Owner</div>
-              <div id="owner" class="stat-value">Brian + Hermes</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Updated</div>
-              <div id="updated" class="stat-value">—</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Inbox</div>
-              <div id="header-email" class="stat-value">Loading…</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Internal focus</div>
-              <div id="header-projects" class="stat-value">Loading…</div>
-            </div>
-          </div>
-          <div class="header-actions">
-            <span class="status-pill">Cloudflare protected</span>
-            <a class="logout-link" href="/cdn-cgi/access/logout">Sign out</a>
-          </div>
+        <div class="header-actions">
+          <a class="logout-link" href="/cdn-cgi/access/logout">Sign out</a>
         </div>
       </section>
 
@@ -1325,15 +1277,6 @@
 
     function syncHeader(data) {
       document.getElementById('headline').textContent = data.headline || 'Editorial ops surface';
-      document.getElementById('subheadline').textContent = data.subheadline || '';
-      document.getElementById('owner').textContent = data.owner || 'Brian + Hermes';
-      document.getElementById('updated').textContent = prettyTime(data.last_updated);
-
-      const visibleModules = (data.modules || []).filter((mod) => shouldRenderModule(mod));
-      const emailModule = visibleModules.find((mod) => mod.id === 'email');
-      const projectModule = visibleModules.find((mod) => mod.id === 'internal_projects');
-      document.getElementById('header-email').textContent = emailModule ? (emailModule.summary || emailModule.status || '—') : '—';
-      document.getElementById('header-projects').textContent = projectModule ? ((projectModule.items || []).slice(0, 2).join(' · ') || '—') : '—';
     }
 
     async function persistModuleItems(modId, items) {
