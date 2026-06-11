@@ -56,9 +56,10 @@
       "type": "status",
       "title": "Internal projects",
       "status": "active",
-      "summary": "Persistent list of internal products we are building together.",
+      "summary": "Persistent list of internal products and infrastructure follow-ups we are building together.",
       "items": [
-        "TextChest"
+        "TextChest",
+        "Pending: rerun cloudflared connector with sudo so it installs as a root/system service and survives reboot before user login."
       ]
     },
     {
