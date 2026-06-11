@@ -2,21 +2,15 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-11T07:00:18.833937+00:00",
+  "last_updated": "2026-06-11T07:30:07.387182+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
       "title": "Inbox needing attention",
-      "status": "attention",
-      "summary": "8 new non-spam email(s); 7 likely need attention.",
-      "items": [
-        "Needs reply: Re: Friday Meeting \u2014 Peter Fernandes. Hi Edwin, Alexa is out Friday, but I'm free all day both days. I can go over the intake and onboarding of ZenHammer user\u2026 Suggested reply: Thanks \u2014 let's set up a support call to resolve the cross-organization payments and KYC questions, then align on the next implementation step.",
-        "Needs reply: Re: ben@colorfarmmedia.com has invited you to join an organization \u2014 Ben Arnon. Ok ,let me know guys. On Wed, Jun 10, 2026 at 4:01 AM, Brian Hume <brian@maxplanck.dev> wrote: I can't do tomorrow at 11\u2026 Suggested reply: Thanks Ben \u2014 this works for me. I'll come prepared to review the app setup requirements and next implementation steps.",
-        "Needs reply: Updated invitation: Dharma Project Apps Set-up @ Thu Jun 11, 2026 2:30pm - 3pm (CEST) (brian@maxplanck.dev) \u2014 Ben Arnon. Dharma Project Apps Set-up You have been invited by Ben Arnon to attend an event named Dharma Project Apps Set-up on Thu\u2026 Suggested reply: Thanks Ben \u2014 this works for me. I'll come prepared to review the app setup requirements and next implementation steps.",
-        "Needs reply: Appointment booked: NMI Integrations Meeting (Tigran Oganesyan) (Brian Hume) @ Mon Jun 15, 2026 3:30pm - 4pm (CEST) (brian@maxplanck.dev) \u2014 Tigran Oganesyan. Booked by Brian Hume brian@maxplanck.dev Welcome to the booking page for NMI's Integrations Team. My name is Tigran Ogan\u2026 Suggested reply: Thanks \u2014 let's set up a support call to resolve the cross-organization payments and KYC questions, then align on the next implementation step.",
-        "Needs reply: Appointment booked: NMI Integrations Meeting (Tigran Oganesyan) (Brian Hume) @ Mon Jun 15, 2026 4pm - 4:30pm (CEST) (brian@maxplanck.dev) \u2014 Tigran Oganesyan. Booked by Brian Hume brian@maxplanck.dev Welcome to the booking page for NMI's Integrations Team. My name is Tigran Ogan\u2026 Suggested reply: Thanks \u2014 let's set up a support call to resolve the cross-organization payments and KYC questions, then align on the next implementation step."
-      ]
+      "status": "idle",
+      "summary": "No new non-spam email at the latest check.",
+      "items": []
     },
     {
       "id": "engagements",
