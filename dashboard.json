@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-11T15:30:20.812658+00:00",
+  "last_updated": "2026-06-11T16:00:26.176719+00:00",
   "modules": [
     {
       "id": "email",
@@ -137,7 +137,7 @@
       "type": "chart",
       "title": "Market pulse",
       "status": "active",
-      "summary": "Latest VOO session 2026-06-11: open $670.10, close $668.62.",
+      "summary": "Latest VOO session 2026-06-11: open $670.10, close $669.47.",
       "series": [
         {
           "date": "2026-05-14",
@@ -237,7 +237,7 @@
         {
           "date": "2026-06-11",
           "open": 670.1,
-          "close": 668.62
+          "close": 669.47
         }
       ]
     },
