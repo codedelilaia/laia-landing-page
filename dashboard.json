@@ -2,15 +2,17 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-11T12:30:53.168105+00:00",
+  "last_updated": "2026-06-11T13:01:01.812766+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
       "title": "Inbox needing attention",
-      "status": "idle",
-      "summary": "No new non-spam email at the latest check.",
-      "items": []
+      "status": "attention",
+      "summary": "1 new non-spam email(s); 1 likely need attention.",
+      "items": [
+        "Needs reply: OpenAI PW \u2014 Ben Arnon. https://1ty.me/oL46PbL Suggested reply: Thanks Ben \u2014 this works for me. I'll come prepared to review the app setup requirements and next implementation steps."
+      ]
     },
     {
       "id": "engagements",
