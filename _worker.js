@@ -66,6 +66,16 @@ function getSessionId(url, body) {
   return body?.sessionId || url.searchParams.get('sessionId') || url.searchParams.get('id');
 }
 
+function uniqueHermesTitle(prefix = 'Dashboard chat') {
+  const stamp = new Date().toISOString().replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
+  const nonce = Math.random().toString(36).slice(2, 8);
+  return `${prefix} ${stamp} ${nonce}`;
+}
+
+function isDuplicateHermesTitle(err) {
+  return /title .*already in use/i.test(formatError(err));
+}
+
 async function hermesStatus(env) {
   const missing = requireHermes(env);
   if (missing) return json({ ok: false, configured: false, error: missing.error });
@@ -86,10 +96,21 @@ async function hermesSessions(request, env) {
   }
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
-    const data = await hermes('/api/sessions', env, {
-      method: 'POST',
-      body: JSON.stringify({ title: body.title || 'Dashboard chat', source: 'dashboard' }),
-    });
+    const requestedTitle = String(body.title || '').trim();
+    const title = requestedTitle || uniqueHermesTitle('Dashboard chat');
+    let data;
+    try {
+      data = await hermes('/api/sessions', env, {
+        method: 'POST',
+        body: JSON.stringify({ title, source: 'dashboard' }),
+      });
+    } catch (err) {
+      if (!isDuplicateHermesTitle(err)) throw err;
+      data = await hermes('/api/sessions', env, {
+        method: 'POST',
+        body: JSON.stringify({ title: uniqueHermesTitle(requestedTitle || 'Dashboard chat'), source: 'dashboard' }),
+      });
+    }
     return json(data);
   }
   return json({ error: 'Method not allowed.' }, 405);
@@ -120,9 +141,11 @@ async function hermesFork(request, env) {
   const body = await request.json().catch(() => ({}));
   const sessionId = getSessionId(new URL(request.url), body);
   if (!sessionId) return json({ error: 'Missing sessionId.' }, 400);
+  const requestedTitle = String(body.title || '').trim();
+  const title = requestedTitle || uniqueHermesTitle('Dashboard branch');
   const data = await hermes(`/api/sessions/${encodeURIComponent(sessionId)}/fork`, env, {
     method: 'POST',
-    body: JSON.stringify({ title: body.title || 'Dashboard branch' }),
+    body: JSON.stringify({ title }),
   });
   return json(data);
 }

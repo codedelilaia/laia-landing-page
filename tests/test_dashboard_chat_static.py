@@ -32,6 +32,8 @@ def test_chat_ui_guides_missing_backend_configuration():
 def test_chat_new_session_handles_object_errors_and_optimistic_insert():
     assert "function formatHermesValue" in INDEX
     assert "function formatHermesError" in INDEX
+    assert "function uniqueHermesChatTitle" in INDEX
+    assert "async function createHermesSession(title = uniqueHermesChatTitle())" in INDEX
     assert "upsertHermesSession" in INDEX
     assert "hermesState.configured = true" in INDEX
     assert "New conversation ready." in INDEX
@@ -41,3 +43,12 @@ def test_chat_new_session_handles_object_errors_and_optimistic_insert():
 def test_worker_formats_upstream_object_errors():
     assert "function formatError" in WORKER
     assert "throw new Error(formatError" in WORKER
+
+
+def test_worker_uses_unique_hermes_session_titles_and_retries_duplicates():
+    assert "function uniqueHermesTitle" in WORKER
+    assert "function isDuplicateHermesTitle" in WORKER
+    assert "uniqueHermesTitle('Dashboard chat')" in WORKER
+    assert "uniqueHermesTitle(requestedTitle || 'Dashboard chat')" in WORKER
+    assert "uniqueHermesTitle('Dashboard branch')" in WORKER
+    assert "'Dashboard chat', source: 'dashboard'" not in WORKER

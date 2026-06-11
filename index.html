@@ -1141,7 +1141,19 @@
       return data?.session_id || data?.id || data?.session?.id || data?.session?.session_id || sessionIdOf(data);
     }
 
-    async function createHermesSession(title = 'Dashboard chat') {
+    function uniqueHermesChatTitle(prefix = 'Dashboard chat') {
+      const stamp = new Date().toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+      const nonce = Math.random().toString(36).slice(2, 6);
+      return `${prefix} ${stamp} ${nonce}`;
+    }
+
+    async function createHermesSession(title = uniqueHermesChatTitle()) {
       if (hermesState.busy) return;
       hermesState.busy = true;
       setHermesEnabled(false);

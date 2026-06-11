@@ -133,6 +133,16 @@
       ]
     },
     {
+      "id": "chores",
+      "type": "status",
+      "title": "Chores",
+      "status": "active",
+      "summary": "Operational follow-ups for keeping Laia and Hermes reliable.",
+      "items": [
+        "Pending: rerun cloudflared connector with sudo so it installs as a root/system service and survives reboot before user login."
+      ]
+    },
+    {
       "id": "market",
       "type": "chart",
       "title": "Market pulse",
