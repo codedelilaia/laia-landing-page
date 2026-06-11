@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-11T14:00:13.155605+00:00",
+  "last_updated": "2026-06-11T14:14:24.354376+00:00",
   "modules": [
     {
       "id": "email",
@@ -56,9 +56,19 @@
       "type": "status",
       "title": "Internal projects",
       "status": "active",
-      "summary": "Persistent list of internal products we are building together.",
+      "summary": "Persistent list of internal products and infrastructure follow-ups we are building together.",
       "items": [
         "TextChest"
+      ]
+    },
+    {
+      "id": "chores",
+      "type": "status",
+      "title": "Chores",
+      "status": "active",
+      "summary": "Loose operational follow-ups to keep visible on the main dashboard.",
+      "items": [
+        "Pending: rerun cloudflared connector with sudo so it installs as a root/system service and survives reboot before user login."
       ]
     },
     {
@@ -137,7 +147,7 @@
       "type": "chart",
       "title": "Market pulse",
       "status": "active",
-      "summary": "Latest VOO session 2026-06-11: open $670.10, close $670.89.",
+      "summary": "Latest VOO session 2026-06-11: open $670.10, close $669.14.",
       "series": [
         {
           "date": "2026-05-14",
@@ -237,7 +247,7 @@
         {
           "date": "2026-06-11",
           "open": 670.1,
-          "close": 670.89
+          "close": 669.14
         }
       ]
     },
