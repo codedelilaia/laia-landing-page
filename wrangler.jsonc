@@ -1,11 +1,22 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "laia-personal-assistant",
-  "main": "_worker.js",
-  "compatibility_date": "2026-06-10",
+  "name": "laia-dashboard",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-06-12",
   "assets": {
-    "directory": ".",
-    "binding": "ASSETS",
-    "run_worker_first": true
-  }
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "MOCK_HERMES_DELAY_MS": "0",
+    "MOCK_HERMES_RESPONSE": "Laia local smoke test response."
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "laia_dashboard",
+      "database_id": "00000000-0000-0000-0000-000000000001",
+      "migrations_dir": "worker/db"
+    }
+  ]
 }
