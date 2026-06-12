@@ -54,4 +54,14 @@ describe('chat run state helpers', () => {
     expect(formatApiError({ error: { detail: 'Hermes backend not connected.' } })).toBe('Hermes backend not connected.');
     expect(formatApiError({})).not.toBe('[Object object]');
   });
+
+  it('normalises failed run payloads with nested error objects into readable text', () => {
+    const updated = applyRunUpdate(
+      baseThread,
+      status({ status: 'failed', errorText: { error: { message: 'Hermes backend rejected the request.' } } as any }),
+    );
+
+    expect(updated.runs[0].status).toBe('failed');
+    expect(updated.runs[0].errorText).toBe('Hermes backend rejected the request.');
+  });
 });

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { createInitialDashboardSeed, createMessageRunTransaction, normaliseModulePatch, uniqueSessionTitle } from '../index';
+import {
+  createInitialDashboardSeed,
+  createMessageRunTransaction,
+  extractHermesErrorMessage,
+  normaliseModulePatch,
+  uniqueSessionTitle,
+} from '../index';
 
 const seed = createInitialDashboardSeed({
   owner: 'Brian + Hermes',
@@ -37,6 +43,11 @@ describe('worker helpers', () => {
     expect(tx.assistantMessage.content).toMatch(/Working/);
     expect(tx.run.status).toBe('queued');
     expect(tx.run.assistantMessageId).toBe(tx.assistantMessage.id);
+  });
+
+  it('unwraps nested Hermes API errors instead of surfacing [object Object]', () => {
+    expect(extractHermesErrorMessage({ error: { message: 'Agent loop crashed upstream.' } }, 500)).toBe('Agent loop crashed upstream.');
+    expect(extractHermesErrorMessage({ error: { detail: 'Session database unavailable.' } }, 503)).toBe('Session database unavailable.');
   });
 
   it('creates unique server-side session titles', () => {

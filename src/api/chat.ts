@@ -20,14 +20,16 @@ function normaliseMessage(input: any): ChatMessage {
 }
 
 function normaliseRun(input: any): ChatRun {
+  const rawProgress = input.progressText ?? input.progress_text ?? null;
+  const rawError = input.errorText ?? input.error_text ?? null;
   return {
     id: String(input.id),
     sessionId: String(input.sessionId ?? input.session_id),
     status: input.status,
     inputMessageId: String(input.inputMessageId ?? input.input_message_id),
     assistantMessageId: input.assistantMessageId ?? input.assistant_message_id ?? null,
-    progressText: input.progressText ?? input.progress_text ?? null,
-    errorText: input.errorText ?? input.error_text ?? null,
+    progressText: rawProgress == null ? null : String(rawProgress),
+    errorText: rawError == null ? null : formatApiError(rawError, 'Run failed.'),
     createdAt: String(input.createdAt ?? input.created_at ?? new Date().toISOString()),
     startedAt: input.startedAt ?? input.started_at ?? null,
     finishedAt: input.finishedAt ?? input.finished_at ?? null,

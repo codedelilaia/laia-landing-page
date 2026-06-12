@@ -163,6 +163,23 @@ function normaliseChatModel(value: unknown) {
   return model || DEFAULT_CHAT_MODEL;
 }
 
+export function extractHermesErrorMessage(value: unknown, status?: number, fallback = 'Run failed.') {
+  if (!value) return status ? `Hermes HTTP ${status}` : fallback;
+  if (typeof value === 'string') return value;
+  if (value instanceof Error) return value.message || (status ? `Hermes HTTP ${status}` : fallback);
+  if (typeof value === 'object') {
+    const nested = (value as any).error ?? (value as any).message ?? (value as any).detail ?? (value as any).raw;
+    if (nested && nested !== value) return extractHermesErrorMessage(nested, status, fallback);
+    try {
+      const serialised = JSON.stringify(value);
+      return serialised === '{}' ? (status ? `Hermes HTTP ${status}` : fallback) : serialised;
+    } catch {
+      return status ? `Hermes HTTP ${status}` : fallback;
+    }
+  }
+  return String(value);
+}
+
 function toApiModule(row: DashboardModuleRow) {
   return {
     id: row.id,
@@ -452,7 +469,7 @@ async function runHermes(env: Env, sessionId: string, content: string) {
     body: JSON.stringify({ input: content }),
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error((data as any).error || (data as any).message || `Hermes HTTP ${response.status}`);
+  if (!response.ok) throw new Error(extractHermesErrorMessage(data, response.status));
   return String(extractAssistantContent(data));
 }
 
