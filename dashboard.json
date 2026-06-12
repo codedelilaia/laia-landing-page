@@ -2,7 +2,7 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-12T16:00:04.236720+00:00",
+  "last_updated": "2026-06-12T22:01:27.806219+00:00",
   "modules": [
     {
       "id": "email",
@@ -66,8 +66,21 @@
       "type": "history",
       "title": "Daily report log",
       "status": "active",
-      "summary": "Nightly work log. 3 days saved; newest first.",
+      "summary": "Nightly work log. 4 days saved; newest first.",
       "entries": [
+        {
+          "date": "2026-06-12",
+          "title": "Dashboard fixes, GPT-5.4 default, and Codedeli outreach list",
+          "summary": "Wrapped up key Laia dashboard fixes, updated Hermes defaults, and delivered a large creator-outreach research package for Codedeli.",
+          "bullets": [
+            "Fixed dashboard chat error rendering so Hermes failures show readable text instead of raw object output; verified with test/build passes and pushed the fix to main.",
+            "Completed dashboard UX work to add a chat model selector, keep GPT-5.4 as the default, and restore the older market-chart range/metrics behavior.",
+            "Verified live dashboard access via Cloudflare Access and confirmed the VOO Market Pulse components were rendering again; noted production rollout still depends on Cloudflare deployment/auth state.",
+            "Updated Hermes configuration and saved the preference so GPT-5.4 remains the default model for future conversations.",
+            "Researched and compiled 200 potential Codedeli creator partners with fit scoring, app ideas, contact routes, and custom outreach messages in a CSV deliverable.",
+            "Created a separate top-25 outreach shortlist to make the first wave of creator outreach easier to review and act on."
+          ]
+        },
         {
           "date": "2026-06-11",
           "title": "Dashboard chat and layout hardening",
@@ -151,7 +164,7 @@
       "type": "chart",
       "title": "Market pulse",
       "status": "active",
-      "summary": "Latest VOO session 2026-06-12: open $681.08, close $679.03.",
+      "summary": "Latest VOO session 2026-06-12: open $681.08, close $681.95.",
       "series": [
         {
           "date": "2026-05-15",
@@ -251,7 +264,7 @@
         {
           "date": "2026-06-12",
           "open": 681.08,
-          "close": 679.03
+          "close": 681.95
         }
       ]
     },
