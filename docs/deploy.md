@@ -12,7 +12,7 @@
 3. `npx wrangler dev --local --port 8788`
 4. Open `http://127.0.0.1:8788`
 
-For a local async demo without Hermes, set `MOCK_HERMES_DELAY_MS` and `MOCK_HERMES_RESPONSE` in `wrangler.toml` or your local environment.
+For a local async demo without Hermes, set `MOCK_HERMES_DELAY_MS` and `MOCK_HERMES_RESPONSE` in `wrangler.jsonc` vars or your local environment.
 
 ## Cloudflare Pages
 
