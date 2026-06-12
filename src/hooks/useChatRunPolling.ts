@@ -4,7 +4,7 @@ import type { ChatRunStatusResponse } from '../types/dashboard';
 
 export function useChatRunPolling(runIds: string[], initialStatuses: Record<string, ChatRunStatusResponse> = {}) {
   const [statuses, setStatuses] = useState<Record<string, ChatRunStatusResponse>>(initialStatuses);
-  const key = useMemo(() => runIds.sort().join(':'), [runIds]);
+  const key = useMemo(() => [...runIds].sort().join(':'), [runIds]);
 
   useEffect(() => {
     if (!runIds.length) return;

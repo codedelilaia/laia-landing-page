@@ -49,7 +49,7 @@ export function ChatTab({ sessionsHydrated, sessions, setSessions, thread, setTh
 
   useEffect(() => {
     if (!selectedSessionId) return;
-    if (thread?.sessionId === selectedSessionId && (thread.messages.length > 0 || thread.runs.length > 0)) {
+    if (thread?.sessionId === selectedSessionId) {
       return;
     }
     fetchChatThread(selectedSessionId)

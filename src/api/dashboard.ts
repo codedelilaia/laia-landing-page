@@ -11,6 +11,16 @@ const FALLBACK_PLACEMENT: Record<string, { zone: DashboardModule['zone']; sortOr
   daily_log: { zone: 'history', sortOrder: 80 },
 };
 
+function derivePayload(input: any) {
+  if (input.payload) return input.payload;
+  if (input.payload_json) return JSON.parse(input.payload_json);
+  if (input.type === 'status') return { items: input.items ?? [] };
+  if (input.type === 'kanban') return { columns: input.columns ?? [] };
+  if (input.type === 'chart') return { series: input.series ?? [] };
+  if (input.type === 'history') return { entries: input.entries ?? [] };
+  return { cards: input.cards ?? [] };
+}
+
 function normaliseModule(input: any): DashboardModule {
   const id = String(input.id);
   const fallback = FALLBACK_PLACEMENT[id] ?? { zone: 'dashboard-secondary', sortOrder: 999 };
@@ -22,7 +32,7 @@ function normaliseModule(input: any): DashboardModule {
     summary: input.summary ? String(input.summary) : '',
     zone: input.zone ?? fallback.zone,
     sortOrder: Number(input.sortOrder ?? input.sort_order ?? fallback.sortOrder),
-    payload: input.payload ?? JSON.parse(input.payload_json ?? '{}'),
+    payload: derivePayload(input),
     updatedAt: String(input.updatedAt ?? input.updated_at ?? new Date().toISOString()),
   };
 }
