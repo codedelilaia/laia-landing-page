@@ -92,7 +92,7 @@ const dashboard: DashboardState = {
   modules,
 };
 
-const sessions: ChatSessionSummary[] = [{ id: 'session-1', title: 'Dashboard chat 1', updatedAt: '2026-06-12T08:30:54.686444+00:00', createdAt: '2026-06-12T08:30:54.686444+00:00' }];
+const sessions: ChatSessionSummary[] = [{ id: 'session-1', title: 'Dashboard chat 1', model: 'gpt-5.4', updatedAt: '2026-06-12T08:30:54.686444+00:00', createdAt: '2026-06-12T08:30:54.686444+00:00' }];
 const thread: ChatThreadState = {
   sessionId: 'session-1',
   messages: [

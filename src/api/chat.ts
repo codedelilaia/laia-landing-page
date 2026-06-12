@@ -111,23 +111,25 @@ export async function fetchChatSessions(): Promise<ChatSessionSummary[]> {
   return (data.sessions ?? data).map((session: any) => ({
     id: String(session.id),
     title: String(session.title),
+    model: String(session.model ?? 'gpt-5.4'),
     createdAt: String(session.createdAt ?? session.created_at),
     updatedAt: String(session.updatedAt ?? session.updated_at),
     archivedAt: session.archivedAt ?? session.archived_at ?? null,
   }));
 }
 
-export async function createChatSession(title?: string): Promise<ChatSessionSummary> {
+export async function createChatSession(title?: string, model = 'gpt-5.4'): Promise<ChatSessionSummary> {
   const response = await fetch('/api/chat/sessions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title }),
+    body: JSON.stringify({ title, model }),
   });
   const data: any = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(formatApiError(data));
   return {
     id: String(data.id),
     title: String(data.title),
+    model: String(data.model ?? model),
     createdAt: String(data.createdAt ?? data.created_at),
     updatedAt: String(data.updatedAt ?? data.updated_at),
     archivedAt: data.archivedAt ?? data.archived_at ?? null,
@@ -145,11 +147,11 @@ export async function fetchChatThread(sessionId: string): Promise<ChatThreadStat
   };
 }
 
-export async function submitChatMessage(sessionId: string, content: string): Promise<CreateChatMessageResponse> {
+export async function submitChatMessage(sessionId: string, content: string, model = 'gpt-5.4'): Promise<CreateChatMessageResponse> {
   const response = await fetch(`/api/chat/sessions/${encodeURIComponent(sessionId)}/messages`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, model }),
   });
   const data: any = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(formatApiError(data));

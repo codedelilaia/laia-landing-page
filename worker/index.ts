@@ -78,6 +78,7 @@ interface ChatRunRow {
   updated_at: string;
 }
 
+const DEFAULT_CHAT_MODEL = 'gpt-5.4';
 const EDITABLE_MODULES = new Set(['chores', 'internal_projects']);
 const ZONES: Record<string, { zone: ModuleZone; sortOrder: number }> = {
   email: { zone: 'dashboard-secondary', sortOrder: 10 },
@@ -157,6 +158,11 @@ function parseMetadata(value: string | null) {
   }
 }
 
+function normaliseChatModel(value: unknown) {
+  const model = String(value || '').trim();
+  return model || DEFAULT_CHAT_MODEL;
+}
+
 function toApiModule(row: DashboardModuleRow) {
   return {
     id: row.id,
@@ -172,9 +178,11 @@ function toApiModule(row: DashboardModuleRow) {
 }
 
 function toApiSession(row: ChatSessionRow) {
+  const metadata = parseMetadata(row.metadata_json) as Record<string, unknown> | null;
   return {
     id: row.id,
     title: row.title,
+    model: normaliseChatModel(metadata?.model),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     archivedAt: row.archived_at,
@@ -353,16 +361,18 @@ async function listSessions(env: Env) {
 async function createSession(request: Request, env: Env) {
   const body: any = await request.json().catch(() => ({}));
   const title = String(body.title || '').trim() || uniqueSessionTitle('Dashboard chat');
+  const model = normaliseChatModel(body.model);
   const session = {
     id: randomId('session'),
     title,
+    model,
     createdAt: nowIso(),
     updatedAt: nowIso(),
   };
   await env.DB.prepare(
-    'INSERT INTO chat_sessions (id, title, created_at, updated_at, archived_at, metadata_json) VALUES (?, ?, ?, ?, NULL, NULL)',
+    'INSERT INTO chat_sessions (id, title, created_at, updated_at, archived_at, metadata_json) VALUES (?, ?, ?, ?, NULL, ?)',
   )
-    .bind(session.id, session.title, session.createdAt, session.updatedAt)
+    .bind(session.id, session.title, session.createdAt, session.updatedAt, serialiseMetadata({ model }))
     .run();
   return json(session, 201);
 }
@@ -388,6 +398,7 @@ async function getThread(env: Env, sessionId: string) {
 async function ensureHermesSession(env: Env, sessionId: string) {
   const session = await env.DB.prepare('SELECT id, title, metadata_json FROM chat_sessions WHERE id = ?').bind(sessionId).first<ChatSessionRow>();
   const metadata = parseMetadata(session?.metadata_json ?? null) as Record<string, unknown> | null;
+  const model = normaliseChatModel(metadata?.model);
   if (metadata?.hermesSessionId) return String(metadata.hermesSessionId);
   if (!env.HERMES_API_BASE || !env.HERMES_API_KEY) return null;
 
@@ -398,7 +409,7 @@ async function ensureHermesSession(env: Env, sessionId: string) {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ title: uniqueSessionTitle(session?.title || 'Dashboard chat'), source: 'dashboard-async' }),
+    body: JSON.stringify({ title: uniqueSessionTitle(session?.title || 'Dashboard chat'), source: 'dashboard-async', model }),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error((data as any).error || (data as any).message || `Hermes HTTP ${response.status}`);
@@ -502,6 +513,16 @@ async function createMessage(request: Request, env: Env, sessionId: string, ctx:
   const content = String(body.content || body.message || '').trim();
   if (!content) return json({ error: 'Missing message.' }, 400);
 
+  const session = await env.DB.prepare('SELECT id, metadata_json FROM chat_sessions WHERE id = ?').bind(sessionId).first<ChatSessionRow>();
+  if (!session) return json({ error: 'Session not found.' }, 404);
+
+  const metadata = (parseMetadata(session.metadata_json) as Record<string, unknown> | null) ?? {};
+  const requestedModel = normaliseChatModel(body.model ?? metadata.model);
+  if (metadata.hermesSessionId && requestedModel !== normaliseChatModel(metadata.model)) {
+    return json({ error: 'Model is locked after the first queued message. Start a new conversation to switch models.' }, 409);
+  }
+
+  const nextMetadata = { ...metadata, model: requestedModel };
   const tx = createMessageRunTransaction({ sessionId, content });
   await env.DB.batch([
     env.DB.prepare(
@@ -533,7 +554,11 @@ async function createMessage(request: Request, env: Env, sessionId: string, ctx:
       null,
       tx.run.updatedAt,
     ),
-    env.DB.prepare('UPDATE chat_sessions SET updated_at = ? WHERE id = ?').bind(tx.run.updatedAt, sessionId),
+    env.DB.prepare('UPDATE chat_sessions SET updated_at = ?, metadata_json = ? WHERE id = ?').bind(
+      tx.run.updatedAt,
+      serialiseMetadata(nextMetadata),
+      sessionId,
+    ),
   ]);
 
   ctx.waitUntil(processRun(env, tx.run.id));

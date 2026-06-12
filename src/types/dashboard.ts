@@ -60,6 +60,7 @@ export interface DashboardState {
 export interface ChatSessionSummary {
   id: string;
   title: string;
+  model: string;
   createdAt: string;
   updatedAt: string;
   archivedAt?: string | null;
