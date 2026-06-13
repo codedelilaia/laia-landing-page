@@ -2,15 +2,17 @@
   "owner": "Brian + Hermes",
   "headline": "Laia keeps the board warm while you are away.",
   "subheadline": "Dense editorial view of inbox, engagements, routines, and live operating context.",
-  "last_updated": "2026-06-12T22:01:27.806219+00:00",
+  "last_updated": "2026-06-13T07:00:20.377840+00:00",
   "modules": [
     {
       "id": "email",
       "type": "status",
       "title": "Inbox needing attention",
-      "status": "idle",
-      "summary": "No new non-spam email at the latest check.",
-      "items": []
+      "status": "attention",
+      "summary": "1 new non-spam email(s); 1 likely need attention.",
+      "items": [
+        "Needs reply: You just got a badge \u2014 DEV Community. Congratulations, Brian Hume! You received the One Year Club badge! This badge celebrates the longevity of those who have\u2026 Suggested reply: Thanks \u2014 got it. I'll review this and come back with the next step shortly."
+      ]
     },
     {
       "id": "engagements",
